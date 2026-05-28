@@ -2,20 +2,44 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from form2act.config import DATA_DIR
+from form2act.config import DATA_DIR, TEMPLATE_PROTOCOL
 from form2act.loaders import load_dp, load_form, load_gia, load_templates
 from form2act.store import DataStore
 
 
+def _find_by_prefix(prefix: str, ext: str = ".xlsx") -> Path | None:
+    prefix_lower = prefix.casefold()
+    for p in sorted(DATA_DIR.glob(f"*{ext}")):
+        if p.name.startswith("~$"):
+            continue
+        if p.name.casefold().startswith(prefix_lower):
+            return p
+    return None
+
+
 def default_file_paths() -> dict[str, Path | None]:
-    files = {
-        "dp": DATA_DIR / "ДП 2025-2026.xlsx",
-        "form": DATA_DIR / "Проба1(данные).xlsx",
-        "gia": DATA_DIR / "ГИА_результаты (3).xlsx",
-        "templates": DATA_DIR / "шаблоны для дипломов 41 (1).xlsx",
-        "protocol_tpl": DATA_DIR / "протоколШАБЛОН (1).docx",
+    dp = _find_by_prefix("ДП")
+    form = _find_by_prefix("Проба")
+    gia = _find_by_prefix("ГИА")
+    templates = _find_by_prefix("шаблоны")
+    schedule = _find_by_prefix("Защита")
+
+    if schedule and not dp:
+        dp = schedule
+        schedule = None
+
+    protocol_tpl = TEMPLATE_PROTOCOL if TEMPLATE_PROTOCOL.exists() else None
+    if not protocol_tpl:
+        protocol_tpl = _find_by_prefix("протокол", ext=".docx")
+
+    return {
+        "dp": dp,
+        "schedule": schedule,
+        "form": form,
+        "gia": gia,
+        "templates": templates,
+        "protocol_tpl": protocol_tpl,
     }
-    return {name: path if path.exists() else None for name, path in files.items()}
 
 
 def reload_all(
@@ -43,6 +67,10 @@ def reload_all(
     dp = dp_path or paths["dp"]
     if dp:
         _run("ДП", lambda: stats.update({"dp": load_dp(store, dp, dp_sheet)}))
+
+    schedule = paths.get("schedule")
+    if schedule:
+        _run("Расписание", lambda: stats.update({"schedule": load_dp(store, schedule)}))
 
     form = form_path or paths["form"]
     if form:
