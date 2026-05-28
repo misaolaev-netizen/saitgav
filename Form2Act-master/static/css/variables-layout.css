@@ -1,0 +1,206 @@
+:root {
+  --bg: #070b14;
+  --glass: rgba(255, 255, 255, 0.06);
+  --glass-strong: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.14);
+  --text: #eef3fb;
+  --muted: #9aa8be;
+  --accent: #6ea8ff;
+  --accent-2: #a78bfa;
+  --ok: #5ee9b5;
+  --danger: #ff8b9a;
+  --shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+  --radius: 16px;
+  --font: "Manrope", "Segoe UI", system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  color-scheme: dark;
+}
+
+body {
+  font-family: var(--font);
+  background:
+    radial-gradient(ellipse 100% 55% at 50% -8%, rgba(61, 90, 254, 0.14) 0%, transparent 52%),
+    radial-gradient(ellipse 70% 45% at 100% 40%, rgba(124, 77, 255, 0.08) 0%, transparent 48%),
+    var(--bg);
+  color: var(--text);
+  margin: 0;
+  min-height: 100vh;
+  line-height: 1.55;
+  overflow-x: hidden;
+}
+
+.app {
+  position: relative;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.25rem 1.25rem 3rem;
+}
+
+.glass {
+  background: var(--glass);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow);
+}
+
+.hero {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  border-radius: var(--radius);
+  margin-bottom: 1rem;
+}
+
+.eyebrow {
+  margin: 0 0 0.25rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.hero h1 {
+  margin: 0;
+  font-size: clamp(1.35rem, 3vw, 1.85rem);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.subtitle {
+  margin: 0.5rem 0 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+  max-width: 36rem;
+}
+
+.status-pill {
+  align-self: center;
+  padding: 0.55rem 1rem;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--glass-border);
+  font-size: 0.82rem;
+  color: var(--muted);
+  max-width: 320px;
+  white-space: pre-wrap;
+}
+
+.tabs {
+  position: relative;
+  display: flex;
+  gap: 0.25rem;
+  padding: 0.35rem;
+  border-radius: 999px;
+  margin-bottom: 1.25rem;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.tab-indicator {
+  position: absolute;
+  top: 0.35rem;
+  bottom: 0.35rem;
+  left: 0;
+  width: 0;
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(110, 168, 255, 0.55), rgba(167, 139, 250, 0.5));
+  box-shadow: 0 2px 12px rgba(110, 168, 255, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  transition: transform 0.42s cubic-bezier(0.4, 0, 0.2, 1),
+    width 0.42s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  z-index: 0;
+  will-change: transform, width;
+}
+
+.tab {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  padding: 0.65rem 1rem;
+  border-radius: 999px;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 600;
+  transition: color 0.45s ease 0.05s, opacity 0.3s ease;
+}
+
+.tab:hover {
+  color: var(--text);
+}
+
+.tab.active {
+  color: #fff;
+  background: transparent;
+  box-shadow: none;
+  animation: tabActivate 0.4s cubic-bezier(0.34, 1.15, 0.64, 1);
+}
+
+@keyframes tabActivate {
+  0% {
+    opacity: 0.7;
+    transform: scale(0.97);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.panels-root {
+  position: relative;
+}
+
+.panel {
+  display: none;
+}
+
+.panel.is-active {
+  display: block;
+  animation: panelFadeIn 0.38s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+.panel--preview.is-active,
+.panel--constructor.is-active {
+  display: flex;
+  animation: panelFadeIn 0.38s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+@keyframes panelFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tab-indicator,
+  .tab.active {
+    transition: none;
+    animation: none;
+  }
+
+  .panel.is-active,
+  .panel--preview.is-active,
+  .panel--constructor.is-active {
+    animation: none;
+  }
+}

@@ -1,0 +1,145 @@
+<section id="panel-protocols" class="panel is-active" role="tabpanel">
+  <div class="grid">
+    <div class="card glass">
+      <h2>Данные</h2>
+      <p class="hint">
+        Основные Excel и шаблоны Word лежат в папке <code>data/</code> в корне проекта.
+        Отдельные таблицы с вкладки «Дипломы» — в <code>uploads/diploma_tables/</code>.
+      </p>
+      <div class="card-actions card-actions--1">
+        <button type="button" id="btnReload">Перезагрузить из data/</button>
+      </div>
+      <label class="mt-md check-row check-row--wrap">
+        <input type="checkbox" id="useTemplates" checked>
+        <span>Брать номера протоколов и др. из Excel «шаблоны для дипломов»</span>
+      </label>
+
+      <details class="card-details mt-sm" open>
+        <summary>Источник Excel</summary>
+        <p class="hint">Выберите файл из <code>data/</code> и лист для чтения.</p>
+        <label class="field">
+          <span>Excel-файл</span>
+          <select id="excelFileSelect"></select>
+        </label>
+        <label class="field">
+          <span>Лист выбранного файла</span>
+          <select id="excelSheetSelect"></select>
+        </label>
+      </details>
+
+      <details class="card-details card-details--upload mt-sm">
+        <summary>Заменить файл в data/ с компьютера</summary>
+        <p class="hint">Файл будет сохранён в <code>data/</code>. Затем нажмите «Перезагрузить из data/».</p>
+        <div class="file-picker" data-file-picker>
+          <input type="file" id="uploadFile" accept=".xlsx,.xls">
+          <span class="file-picker__btn" data-file-label>Выбрать файл .xlsx</span>
+          <span class="file-picker__name" data-file-name>Файл не выбран</span>
+        </div>
+        <div class="card-actions card-actions--1">
+          <button type="button" class="secondary" id="btnUpload">Сохранить в data/</button>
+        </div>
+      </details>
+    </div>
+
+    <div class="card glass">
+      <h2>Шаблон Word</h2>
+      <p class="hint">Файлы <code>.docx</code> из папки <code>data/</code> (не путать с таблицами «Дипломы»).</p>
+      <label for="protocolTemplate">Шаблон</label>
+      <select id="protocolTemplate" class="select-template" title="Все .docx из папки data/"></select>
+      <div id="protocolTableMode" class="protocol-table-mode" hidden>
+        <p class="hint protocol-table-mode__lead">
+          <strong>Документ со списком в таблице</strong> — отметьте, откуда брать строки (можно несколько источников сразу).
+        </p>
+        <fieldset class="protocol-table-sources">
+          <legend class="hint">Строки таблицы в Word</legend>
+          <label class="check-row">
+            <input type="checkbox" id="protocolSrcStudents" checked>
+            <span>Отмеченные студенты (база после «Перезагрузить из data/»)</span>
+          </label>
+          <div class="protocol-table-src-block">
+            <p class="hint muted">Таблицы с вкладки «Дипломы»:</p>
+            <div id="protocolDipTableChecks" class="protocol-table-checks muted">— нет таблиц —</div>
+          </div>
+          <div class="protocol-table-src-block">
+            <p class="hint muted">Excel только для этого шаблона:</p>
+            <div id="protocolXlsxTableChecks" class="protocol-table-checks muted">— не загружено —</div>
+            <div class="file-picker file-picker--compact mt-sm" data-file-picker>
+              <input type="file" id="protocolTableUpload" accept=".xlsx,.xls" class="hidden-input">
+              <button type="button" class="secondary file-picker__trigger" data-file-label>+ загрузить .xlsx</button>
+            </div>
+          </div>
+        </fieldset>
+        <p class="hint muted">Колонки в строке шаблона: <span id="protocolTableColumns" class="protocol-table-columns"></span></p>
+      </div>
+      <div id="protocolMergeStatus" class="protocol-merge-status" role="status" aria-live="polite" hidden></div>
+    </div>
+  </div>
+
+  <div class="card glass card-spaced">
+    <h2>Предпросмотр исходного листа</h2>
+    <p class="hint">Таблица выбранного Excel-листа в оригинальном виде.</p>
+    <div class="students-table-wrap custom-scroll">
+      <table class="students-table" id="excelSheetPreviewTable">
+        <thead id="excelSheetPreviewHead"></thead>
+        <tbody id="excelSheetPreviewBody">
+          <tr><td class="muted">Выберите файл и лист</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card glass card-spaced students-card">
+    <div class="students-card__head">
+      <h2>Студенты</h2>
+      <p id="studentSelectionCount" class="students-card__count muted">—</p>
+    </div>
+
+    <div class="students-toolbar">
+      <input type="search" id="studentSearch" class="students-search" placeholder="Поиск по ФИО…" autocomplete="off">
+      <select id="studentFilterStatus" class="students-filter" title="Фильтр">
+        <option value="all">Все</option>
+        <option value="ready">Готовы к шаблону</option>
+        <option value="gaps">Не хватает полей шаблона</option>
+        <option value="low">Мало данных в Excel</option>
+      </select>
+      <select id="studentFilterSource" class="students-filter" title="Откуда есть данные">
+        <option value="">Все источники</option>
+      </select>
+    </div>
+
+    <div class="students-actions">
+      <button type="button" id="btnGenChecked" disabled>Скачать</button>
+    </div>
+
+    <div class="students-table-wrap custom-scroll">
+      <table class="students-table" id="studentsTable">
+        <thead>
+          <tr>
+            <th class="col-check" scope="col">
+              <input type="checkbox" id="studentSelectAllVisible" title="Отметить всех в списке; снять галочку — очистить выбор" aria-label="Выбрать всех видимых">
+            </th>
+            <th class="col-sortable" data-sort="fio" scope="col">ФИО</th>
+            <th class="col-sortable" data-sort="sources" scope="col">Источники</th>
+            <th class="col-sortable" data-sort="fields" scope="col">Данные</th>
+            <th class="col-sortable col-tpl-gaps" data-sort="gaps" id="studentTableTplCol" scope="col" title="Пустые поля шаблона">Шаблон</th>
+          </tr>
+        </thead>
+        <tbody id="studentTable"></tbody>
+      </table>
+    </div>
+    <p class="hint students-table-hint">Протокол — отдельный файл на каждого. Акт со таблицей — один файл, источники строк выше. Клик по строке — правка полей.</p>
+  </div>
+
+  <div class="card glass editor-card" id="editor">
+    <h2>Поля протокола</h2>
+    <p id="editorFio" class="muted"></p>
+    <div id="editorMergeStatus" class="editor-merge-status" hidden></div>
+    <div class="fields" id="fieldGrid"></div>
+    <div class="btn-row">
+      <button type="button" id="btnSave">Сохранить</button>
+      <button type="button" class="secondary" id="btnAutoFillOne">Автоподставить</button>
+      <button type="button" class="secondary" id="btnAutoFillChecked">Подставить выбранным</button>
+      <button type="button" class="ghost" id="btnPreviewWord">Предпросмотр Word</button>
+    </div>
+  </div>
+</section>

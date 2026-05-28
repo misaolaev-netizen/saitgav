@@ -1,0 +1,377 @@
+input,
+select,
+button,
+textarea {
+  font: inherit;
+}
+
+input[type="file"] {
+  position: absolute;
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  z-index: -1;
+}
+
+.file-picker {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0.5rem 0 0.75rem;
+}
+
+.file-picker__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  width: 100%;
+  margin: 0;
+  padding: 0.6rem 1rem;
+  border-radius: 10px;
+  border: 1px dashed rgba(110, 168, 255, 0.45);
+  background: rgba(110, 168, 255, 0.08);
+  color: var(--text);
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.file-picker__btn:hover {
+  background: rgba(110, 168, 255, 0.16);
+  border-color: rgba(110, 168, 255, 0.65);
+  transform: none;
+  filter: none;
+}
+
+.file-picker__name {
+  font-size: 0.8rem;
+  color: var(--muted);
+  word-break: break-word;
+  min-height: 1.2em;
+}
+
+.file-picker__name.has-file {
+  color: var(--ok);
+}
+
+.file-picker--compact .file-picker__name:empty {
+  display: none;
+}
+
+.file-picker--compact .file-picker__btn {
+  font-size: 0.78rem;
+  padding: 0.5rem 0.65rem;
+  margin: 0;
+}
+
+.file-picker--toolbar {
+  display: inline-flex;
+  margin: 0;
+  gap: 0;
+}
+
+.file-picker--toolbar input[type="file"] {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.file-picker--toolbar .file-picker__trigger {
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+
+.diploma-form input[type="text"],
+.diploma-form input[type="number"],
+.diploma-form textarea,
+select,
+#dpSheet,
+#tplSheet,
+#uploadKind {
+  width: 100%;
+  margin-bottom: 0.5rem;
+  padding: 0.55rem 0.75rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background-color: rgba(12, 18, 32, 0.92);
+  color: var(--text);
+  transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+}
+
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  color-scheme: dark;
+  cursor: pointer;
+  padding-right: 2.35rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239aa8be' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.65rem center;
+  background-size: 1rem;
+}
+
+select:hover {
+  border-color: rgba(110, 168, 255, 0.35);
+  background-color: rgba(16, 24, 42, 0.96);
+}
+
+select:focus {
+  background-color: rgba(18, 28, 48, 0.98);
+}
+
+select option,
+select optgroup {
+  background-color: #0f1528;
+  color: #eef3fb;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+select option:checked {
+  background: linear-gradient(0deg, rgba(110, 168, 255, 0.45), rgba(110, 168, 255, 0.45));
+  color: #fff;
+  font-weight: 600;
+}
+
+select option:hover,
+select option:focus {
+  background-color: rgba(110, 168, 255, 0.28);
+  color: #fff;
+}
+
+select option:disabled {
+  color: var(--muted);
+  background-color: #0c111c;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: rgba(110, 168, 255, 0.6);
+  box-shadow: 0 0 0 3px rgba(110, 168, 255, 0.15);
+}
+
+button {
+  background: linear-gradient(135deg, #4d8dff, #7c5cff);
+  color: #fff;
+  border: none;
+  padding: 0.55rem 1.1rem;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-right: 0.5rem;
+  margin-top: 0.25rem;
+  font-weight: 600;
+  transition: transform 0.15s, filter 0.15s;
+}
+
+button:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+
+button.secondary {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--glass-border);
+}
+
+button.ghost {
+  background: transparent;
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  color: var(--muted);
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.preview-mode-toggle {
+  display: inline-flex;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--glass-border);
+}
+
+.preview-mode-toggle button {
+  margin: 0;
+  border-radius: 0;
+  background: rgba(0, 0, 0, 0.25);
+  border: none;
+  padding: 0.45rem 0.75rem;
+  font-size: 0.8rem;
+}
+
+.preview-mode-toggle button.active {
+  background: linear-gradient(135deg, rgba(77, 141, 255, 0.9), rgba(124, 92, 255, 0.9));
+}
+
+.custom-field-add {
+  display: flex;
+  gap: 0.45rem;
+  align-items: stretch;
+  margin: 0.65rem 0 0.35rem;
+}
+
+.custom-field-add input[type="text"] {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  padding: 0.55rem 0.75rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background-color: rgba(12, 18, 32, 0.92);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.85rem;
+  transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+}
+
+.custom-field-add input[type="text"]::placeholder {
+  color: var(--muted);
+  opacity: 0.85;
+}
+
+.custom-field-add input[type="text"]:focus {
+  outline: none;
+  border-color: rgba(110, 168, 255, 0.6);
+  box-shadow: 0 0 0 3px rgba(110, 168, 255, 0.15);
+  background-color: rgba(18, 28, 48, 0.98);
+}
+
+.custom-field-add button {
+  margin: 0;
+  flex-shrink: 0;
+  align-self: center;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.82rem;
+}
+
+.protocol-merge-status {
+  margin: 0.65rem 0 0;
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.protocol-merge-status.hidden {
+  display: none;
+}
+
+.merge-warn {
+  margin: 0;
+  padding: 0.55rem 0.65rem;
+  border-radius: 8px;
+}
+
+.merge-warn--info {
+  background: rgba(110, 168, 255, 0.1);
+  border: 1px solid rgba(110, 168, 255, 0.28);
+  color: #c8dcff;
+}
+
+.merge-warn--ok {
+  background: rgba(80, 200, 120, 0.12);
+  border: 1px solid rgba(80, 200, 120, 0.35);
+  color: #b8f0c8;
+}
+
+.merge-warn--missing {
+  background: rgba(255, 140, 100, 0.12);
+  border: 1px solid rgba(255, 160, 120, 0.35);
+  color: #ffd4c4;
+}
+
+.merge-missing-list {
+  margin: 0.35rem 0 0;
+  padding-left: 1.2rem;
+}
+
+.merge-missing-list li {
+  margin: 0.2rem 0;
+}
+
+.merge-missing-label {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.col-tpl-gaps {
+  text-align: center;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.col-tpl-gaps--warn {
+  color: #ffb4a8;
+  font-weight: 600;
+}
+
+.col-tpl-gaps--ok {
+  color: #8fd4a8;
+}
+
+#studentTable tr.row--missing-fields td:first-child {
+  box-shadow: inset 3px 0 0 rgba(255, 140, 100, 0.75);
+}
+
+.editor-merge-status {
+  margin: 0.5rem 0 0.75rem;
+}
+
+.editor-merge-details {
+  border-radius: 8px;
+  background: rgba(255, 140, 100, 0.08);
+  border: 1px solid rgba(255, 160, 120, 0.35);
+  padding: 0.45rem 0.65rem 0.55rem;
+}
+
+.editor-merge-details summary {
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.86rem;
+  color: #ffd4c4;
+  list-style: none;
+}
+
+.editor-merge-details summary::-webkit-details-marker {
+  display: none;
+}
+
+.editor-merge-table-wrap {
+  max-height: 220px;
+  margin-top: 0.5rem;
+  overflow: auto;
+}
+
+.editor-merge-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+.editor-merge-table th,
+.editor-merge-table td {
+  padding: 0.35rem 0.5rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  vertical-align: top;
+}
+
+.editor-merge-table th {
+  color: var(--muted);
+  font-weight: 500;
+  font-size: 0.75rem;
+}
+
+.merge-field-code {
+  white-space: nowrap;
+  font-size: 0.78rem;
+}

@@ -1,0 +1,58 @@
+<section id="panel-constructor" class="panel panel--constructor" role="tabpanel" hidden>
+  <div class="constructor-split">
+    <div class="constructor-side custom-scroll" id="constructorSide">
+      <div class="card glass constructor-card">
+        <h2>Шаблон Word</h2>
+        <label for="ctorGenTemplate">Файл .docx</label>
+        <select id="ctorGenTemplate" class="select-template"></select>
+
+        <label for="ctorPreviewStudent">Пример студента (необяз.)</label>
+        <select id="ctorPreviewStudent" class="select-student">
+          <option value="">— только шаблон —</option>
+        </select>
+
+        <div class="file-picker file-picker--compact mt-sm" data-file-picker>
+          <input type="file" id="ctorUploadTemplate" accept=".docx" class="hidden-input">
+          <button type="button" class="secondary file-picker__trigger" data-file-label>+ загрузить .docx</button>
+        </div>
+
+        <p class="hint ctor-edit-hint">Шаблон из data/ без изменений. Скачать — тот же файл.</p>
+      </div>
+
+      <div class="card glass constructor-card">
+        <h2>Поля для вставки</h2>
+        <p class="hint">Клик в документ → кнопка поля (или перетащите)</p>
+        <div id="ctorFieldChips" class="field-chips"></div>
+        <div class="custom-field-add">
+          <input type="text" id="ctorCustomFieldName" placeholder="Своё поле" maxlength="80">
+          <button type="button" class="secondary" id="btnCtorAddCustomField">+ поле</button>
+        </div>
+      </div>
+
+      <div class="card glass constructor-card">
+        <div class="btn-row ctor-actions">
+          <button type="button" id="btnCtorSave">Сохранить правки</button>
+          <button type="button" class="secondary" id="btnCtorDownload">Скачать .docx</button>
+          <button type="button" class="ghost" id="btnCtorResetLayout" title="Убрать сохранённые правки и показать чистый .docx">Сбросить правки</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="constructor-preview glass">
+      <div class="constructor-preview__toolbar">
+        <span class="hint" id="ctorPreviewModeHint">Редактирование шаблона</span>
+      </div>
+      <div id="ctorPreviewLoading" class="preview-loading hidden">
+        <span class="spinner"></span> Сборка…
+      </div>
+      <p id="ctorPreviewError" class="preview-error hidden"></p>
+      <div class="word-preview-scroller custom-scroll" id="ctorPreviewScroller">
+        <div class="preview-scale-box" id="ctorPreviewScaleBox">
+          <div id="ctorPreviewHost" class="docx-host">
+            <p class="muted word-placeholder">Выберите .docx — документ откроется для правки</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

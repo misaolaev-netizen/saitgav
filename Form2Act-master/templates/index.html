@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Form2Act — протоколы и дипломы{% endblock %}
+{% block content %}
+  <div class="panels-root">
+    {% include "panels/protocols.html" %}
+    {% include "panels/diplomas.html" %}
+    {% include "panels/preview.html" %}
+    {% include "panels/constructor.html" %}
+  </div>
+{% endblock %}

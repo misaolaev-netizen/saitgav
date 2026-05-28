@@ -1,0 +1,54 @@
+<section id="panel-preview" class="panel panel--preview" role="tabpanel" hidden>
+  <div class="preview-toolbar glass">
+    <div class="preview-toolbar__main">
+      <label class="toolbar-field toolbar-field--student">
+        <span class="field-label">Студент</span>
+        <select id="previewStudent" class="select-student"><option value="">— выберите —</option></select>
+      </label>
+      <label class="toolbar-field toolbar-field--template">
+        <span class="field-label">Шаблон Word</span>
+        <select id="previewTemplate" class="select-template" title="Файлы из папки data/"></select>
+      </label>
+      <div class="preview-toolbar__actions">
+        <div class="file-picker file-picker--toolbar" data-file-picker>
+          <input type="file" id="uploadTemplateFile" accept=".docx">
+          <button type="button" class="secondary file-picker__trigger" data-file-label>+ шаблон</button>
+        </div>
+        <button type="button" id="btnRefreshPreview">Обновить</button>
+        <button type="button" class="secondary" id="btnSavePreviewFields">Сохранить</button>
+        <button type="button" class="secondary" id="btnPreviewGen" disabled>Сформировать</button>
+      </div>
+    </div>
+    <p id="previewHint" class="preview-hint muted">Выберите студента — справа подставятся значения из полей слева. Правки текста — «Сохранить». «Сформировать» — скачать .docx.</p>
+  </div>
+
+  <div id="previewLoading" class="preview-loading hidden" aria-live="polite">
+    <span class="spinner"></span> Сборка документа…
+  </div>
+  <p id="previewError" class="preview-error hidden"></p>
+
+  <div class="preview-split">
+    <div class="preview-fields-panel glass custom-scroll">
+      <h3 class="preview-panel-title">Поля документа</h3>
+      <p class="hint">Значения слева подставляются в документ справа. Метки <code>{поле}</code> — вставить в шаблон (конструктор).</p>
+      <div id="previewFieldInserter" class="field-inserter hidden">
+        <span class="inserter-label">Метки (клик или перетащить в документ):</span>
+        <div id="fieldChips" class="field-chips"></div>
+      </div>
+      <div class="custom-field-add">
+        <input type="text" id="customFieldName" placeholder="Своё поле, напр. Номер_акта" maxlength="80">
+        <button type="button" class="secondary" id="btnAddCustomField">+ поле</button>
+      </div>
+      <p class="hint custom-field-hint">Своё поле можно заполнить здесь или из Excel (колонка с таким именем). Дипломы — из вкладки «Дипломы».</p>
+      <div id="previewSections" class="preview-sections editable-fields"></div>
+    </div>
+
+    <div class="word-preview-scroller glass custom-scroll" id="wordPreviewScroller">
+      <div class="preview-scale-box" id="previewScaleBox">
+        <div id="wordPreview" class="docx-host" aria-label="Предпросмотр протокола">
+          <p class="muted word-placeholder">Выберите шаблон — документ появится автоматически</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

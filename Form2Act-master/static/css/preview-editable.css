@@ -1,0 +1,83 @@
+.docx-editable,
+.docx-editable.docx-wrapper {
+  background: #fff;
+  padding: 1.5rem 1.35rem 1.75rem;
+  margin: 0 auto;
+  width: 21cm;
+  max-width: 100%;
+  box-sizing: border-box;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.18);
+  border-radius: 2px;
+  color: #000;
+  font-family: "Times New Roman", Times, serif;
+  font-size: 12pt;
+  line-height: 1.35;
+  cursor: text;
+  outline: none;
+  min-height: 200px;
+  overflow-wrap: anywhere;
+}
+
+.docx-editable table {
+  width: 100%;
+  max-width: 100%;
+  table-layout: fixed;
+  word-wrap: break-word;
+}
+
+.docx-editable img {
+  max-width: 100%;
+  height: auto;
+}
+
+.docx-editable:focus {
+  box-shadow: 0 0 0 2px rgba(110, 168, 255, 0.55), 0 12px 48px rgba(0, 0, 0, 0.5);
+}
+
+.docx-host.docx-host--editing {
+  min-height: 200px;
+}
+
+.docx-editable p {
+  margin: 0 0 0.45em;
+}
+
+.merge-editable {
+  outline: none;
+  border-radius: 2px;
+  padding: 0 1px;
+  cursor: text;
+  background: rgba(110, 168, 255, 0.12);
+  box-shadow: 0 0 0 1px rgba(110, 168, 255, 0.35);
+  transition: background 0.15s, box-shadow 0.15s;
+}
+
+.merge-editable:hover {
+  background: rgba(110, 168, 255, 0.2);
+}
+
+.merge-editable:focus {
+  background: rgba(110, 168, 255, 0.28);
+  box-shadow: 0 0 0 2px rgba(110, 168, 255, 0.55);
+}
+
+.docx-host--editing.docx-host--word .docx-wrapper {
+  pointer-events: auto;
+  user-select: text;
+}
+
+.docx-host--editing .docx-wrapper section.docx {
+  outline: none;
+  cursor: text;
+  caret-color: #000;
+}
+
+.docx-host--editing .docx-wrapper section.docx:focus {
+  outline: 1px solid rgba(66, 133, 244, 0.35);
+  outline-offset: 2px;
+}
+
+.docx-host--word:not(.docx-host--editing) .docx-wrapper {
+  pointer-events: none;
+  user-select: text;
+}

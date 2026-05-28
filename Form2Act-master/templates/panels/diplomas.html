@@ -1,0 +1,147 @@
+<section id="panel-diplomas" class="panel" role="tabpanel" hidden>
+  <div class="diploma-layout">
+    <aside class="card glass dip-tables-panel">
+      <h3>Таблицы Excel</h3>
+      <p class="hint">Выберите таблицу — «Сохранить» добавит или обновит строку по ФИО</p>
+      <div class="dip-tables-actions">
+        <button type="button" class="secondary" id="btnDipNewTable">+ Новая</button>
+        <button type="button" class="ghost dip-mini-btn" id="btnDipImportTable">Из .xlsx</button>
+        <input type="file" id="dipImportFile" accept=".xlsx,.xls" class="hidden-input">
+      </div>
+      <ul id="dipTableList" class="dip-table-list" role="listbox" aria-label="Список таблиц">
+        <li class="muted dip-table-empty">Нет таблиц — создайте новую</li>
+      </ul>
+      <p id="dipTableMeta" class="hint dip-table-meta"></p>
+      <div class="dip-table-side-actions">
+        <a id="dipTableDownload" class="dip-table-dl hidden" href="#" download>Скачать .xlsx</a>
+        <button type="button" class="ghost dip-delete-btn hidden" id="btnDipDeleteTable">Удалить таблицу</button>
+      </div>
+
+      <div class="dip-side-template">
+        <label class="check-row dip-template-toggle">
+          <input type="checkbox" id="dipUseTemplate">
+          <span>С подстановкой в шаблон Word</span>
+        </label>
+
+        <div id="dipTemplateBlock" class="dip-template-block hidden">
+          <label for="dipTemplate">Шаблон Word</label>
+          <select id="dipTemplate" class="select-template"></select>
+          <div class="file-picker file-picker--compact dip-template-upload" data-file-picker>
+            <input type="file" id="dipUploadTemplate" accept=".docx" class="hidden-input">
+            <button type="button" class="secondary file-picker__trigger" data-file-label>+ загрузить .docx</button>
+          </div>
+          <button type="button" class="secondary dip-preview-btn" id="btnDipTemplatePreview">Предпросмотр в Word</button>
+          <p class="hint">Подстановка полей формы в шаблон. Данные из базы подтянутся по ФИО.</p>
+        </div>
+      </div>
+    </aside>
+
+    <form id="diplomaForm" class="card glass diploma-form">
+      <div class="form-head">
+        <h2>ДИПЛОМЫ</h2>
+        <span class="badge" id="dipSaveTarget">Таблица не выбрана</span>
+      </div>
+      <label class="field">
+        <span>Файл сохранения (Excel)</span>
+        <select id="dipSaveFileSelect"></select>
+      </label>
+
+      <label class="field">
+        <span>ФИО <em>*</em></span>
+        <input type="text" name="fio" id="dipFio" list="fioList" required placeholder="Иванов Иван Иванович" autocomplete="name">
+        <datalist id="fioList"></datalist>
+      </label>
+
+      <div class="field-row">
+        <label class="field">
+          <span>Кол-во страниц <em>*</em></span>
+          <input type="number" name="pages" id="dipPages" min="1" required placeholder="46">
+        </label>
+        <label class="field">
+          <span>Кол-во страниц граф. ч. <em>*</em></span>
+          <input type="number" name="graph_pages" id="dipGraph" min="0" required placeholder="8">
+        </label>
+      </div>
+
+      <fieldset class="field">
+        <legend>Рецензия <em>*</em></legend>
+        <label class="radio-card"><input type="radio" name="Рецензия_замечания" value="замечаний нет" required> замечаний нет</label>
+        <label class="radio-card"><input type="radio" name="Рецензия_замечания" value="незначительные замечания"> незначительные замечания</label>
+        <label class="radio-card"><input type="radio" name="Рецензия_замечания" value="есть замечания"> есть замечания</label>
+      </fieldset>
+
+      <label class="field">
+        <span>Рецензия достоинства дипломной работы <em>*</em></span>
+        <textarea name="Рецензия_достоинства" id="dipMerits" rows="3" required placeholder="Кратко о достоинствах работы…"></textarea>
+      </label>
+
+      <label class="field">
+        <span>Вопросы комиссии <em>*</em></span>
+        <textarea name="Вопросы" id="dipQuestions" rows="3" required placeholder="Введите вопросы (каждый с новой строки)"></textarea>
+      </label>
+
+      <fieldset class="field">
+        <legend>Отзыв руководителя</legend>
+        <label class="radio-card"><input type="radio" name="Отзыв_руководителя" value="Положительный"> Положительный</label>
+        <label class="radio-card"><input type="radio" name="Отзыв_руководителя" value="Отрицательный"> Отрицательный</label>
+      </fieldset>
+
+      <fieldset class="field">
+        <legend>Отзыв руководителя 2 <em>*</em></legend>
+        <label class="radio-card long">
+          <input type="radio" name="Отзыв_руководителя_2" value="Содержание дипломного проекта соответствует выданному индивидуальному заданию. Дипломный проект выполнен на высоком уровне, соответствует всем требованиям и может быть допущен к защите." required>
+          <span>Содержание дипломного проекта соответствует выданному индивидуальному заданию. Дипломный проект выполнен на <strong>высоком</strong> уровне…</span>
+        </label>
+        <label class="radio-card long">
+          <input type="radio" name="Отзыв_руководителя_2" value="Содержание дипломного проекта не полностью соответствует выданному индивидуальному заданию. Дипломный проект выполнен на удовлетворительном уровне, может быть допущен к защите.">
+          <span>Содержание дипломного проекта <strong>не полностью</strong> соответствует заданию…</span>
+        </label>
+        <label class="radio-card long">
+          <input type="radio" name="Отзыв_руководителя_2" value="Содержание дипломного проекта полностью соответствует выданному индивидуальному заданию. Дипломный проект выполнен на удовлетворительном уровне, может быть допущен к защите.">
+          <span>Содержание дипломного проекта <strong>полностью</strong> соответствует заданию…</span>
+        </label>
+      </fieldset>
+
+      <fieldset class="field">
+        <legend>Готовое изделие <em>*</em></legend>
+        <label class="chip"><input type="radio" name="Готовое_изделие" value="Приложение" required> Приложение</label>
+        <label class="chip"><input type="radio" name="Готовое_изделие" value="Мобильное приложение"> Мобильное приложение</label>
+        <label class="chip"><input type="radio" name="Готовое_изделие" value="Веб-сайт"> Веб-сайт</label>
+        <label class="chip"><input type="radio" name="Готовое_изделие" value="Подсистема"> Подсистема</label>
+      </fieldset>
+
+      <fieldset class="field">
+        <legend>Общая оценка</legend>
+        <label class="radio-card long">
+          <input type="radio" name="Общая_оценка" value="При защите работы обучающийся показал знание вопросов темы, оперировал данными исследования, без особых затруднений отвечал на поставленные вопросы">
+          <span>Без особых затруднений отвечал на вопросы</span>
+        </label>
+        <label class="radio-card long">
+          <input type="radio" name="Общая_оценка" value="При защите работы обучающийся показал знание вопросов темы, оперировал данными исследования, с некоторыми затруднениями отвечал на поставленные вопросы">
+          <span>С некоторыми затруднениями отвечал на вопросы</span>
+        </label>
+      </fieldset>
+
+      <fieldset class="field">
+        <legend>Уровень знаний <em>*</em></legend>
+        <label class="chip"><input type="radio" name="Уровень_знаний" value="отличный" required> отличный</label>
+        <label class="chip"><input type="radio" name="Уровень_знаний" value="хороший"> хороший</label>
+        <label class="chip"><input type="radio" name="Уровень_знаний" value="удовлетворительный"> удовлетворительный</label>
+      </fieldset>
+
+      <div class="btn-row">
+        <button type="submit">Сохранить</button>
+        <button type="button" class="secondary" id="btnDipLoad">Загрузить строку</button>
+        <button type="button" class="ghost" id="btnDipPreview">Предпросмотр →</button>
+      </div>
+    </form>
+
+    <aside class="card glass diploma-aside">
+      <h3>Мини-предпросмотр</h3>
+      <p class="hint">Обновляется при вводе</p>
+      <div id="dipLivePreview" class="live-preview">
+        <p class="muted">Заполните форму</p>
+      </div>
+    </aside>
+  </div>
+</section>
