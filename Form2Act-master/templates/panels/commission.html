@@ -1,0 +1,102 @@
+<section id="panel-commission" class="panel panel--commission" role="tabpanel" hidden>
+  <div class="commission-layout">
+    <div class="card glass commission-card commission-card--main">
+      <div class="commission-card__head">
+        <h2 id="commissionTitle">Состав государственной экзаменационной комиссии</h2>
+        <p class="hint" id="commissionSpecialty"></p>
+      </div>
+
+      <div class="commission-roles">
+        <article class="commission-role commission-role--chair">
+          <h3 class="commission-role__label">Председатель ГЭК</h3>
+          <p class="commission-role__name" id="chairmanName">—</p>
+          <p class="commission-role__position" id="chairmanPosition"></p>
+        </article>
+
+        <article class="commission-role commission-role--deputy">
+          <h3 class="commission-role__label">Заместитель председателя ГЭК</h3>
+          <p class="commission-role__name" id="deputyName">—</p>
+          <p class="commission-role__position" id="deputyPosition"></p>
+        </article>
+
+        <article class="commission-role commission-role--secretary">
+          <h3 class="commission-role__label">Секретарь ГЭК</h3>
+          <p class="commission-role__name" id="secretaryName">—</p>
+          <p class="commission-role__position" id="secretaryPosition"></p>
+        </article>
+      </div>
+
+      <div class="commission-members">
+        <h3 class="commission-section-title">Члены ГЭК</h3>
+        <ol class="commission-member-list" id="commissionMembersList">
+          <li class="muted">Загрузка…</li>
+        </ol>
+      </div>
+
+      <details class="commission-edit" id="commissionEditBlock">
+        <summary>Редактировать состав</summary>
+        <p class="hint">Изменения сохраняются в <code>data/commission.json</code>.</p>
+        <form id="commissionForm" class="commission-form">
+          <div class="commission-form__row">
+            <label class="field">
+              <span>Заголовок</span>
+              <input type="text" id="formTitle" name="title" autocomplete="off">
+            </label>
+            <label class="field">
+              <span>Специальность</span>
+              <input type="text" id="formSpecialty" name="specialty" autocomplete="off">
+            </label>
+          </div>
+
+          <fieldset class="commission-form__group">
+            <legend>Председатель ГЭК</legend>
+            <div class="commission-form__row">
+              <label class="field"><span>ФИО</span><input type="text" id="formChairmanName" autocomplete="off"></label>
+              <label class="field"><span>Должность</span><input type="text" id="formChairmanPosition" autocomplete="off"></label>
+            </div>
+          </fieldset>
+
+          <fieldset class="commission-form__group">
+            <legend>Заместитель председателя ГЭК</legend>
+            <div class="commission-form__row">
+              <label class="field"><span>ФИО</span><input type="text" id="formDeputyName" autocomplete="off"></label>
+              <label class="field"><span>Должность</span><input type="text" id="formDeputyPosition" autocomplete="off"></label>
+            </div>
+          </fieldset>
+
+          <fieldset class="commission-form__group">
+            <legend>Секретарь</legend>
+            <div class="commission-form__row">
+              <label class="field"><span>ФИО</span><input type="text" id="formSecretaryName" autocomplete="off"></label>
+              <label class="field"><span>Должность</span><input type="text" id="formSecretaryPosition" autocomplete="off"></label>
+            </div>
+          </fieldset>
+
+          <fieldset class="commission-form__group">
+            <legend>Члены ГЭК</legend>
+            <div id="commissionFormMembers" class="commission-form__members"></div>
+            <div class="commission-form__member-actions">
+              <button type="button" class="secondary" id="btnAddCommissionMember">+ Добавить члена ГЭК</button>
+            </div>
+          </fieldset>
+
+          <div class="commission-form__actions">
+            <button type="submit" class="primary">Сохранить</button>
+            <button type="button" class="ghost" id="btnResetCommissionForm">Отменить изменения</button>
+          </div>
+          <p id="commissionFormStatus" class="hint" aria-live="polite"></p>
+        </form>
+      </details>
+    </div>
+
+    <div class="card glass commission-card commission-card--schedule">
+      <div class="commission-card__head">
+        <h2>График работы комиссии по дням</h2>
+        <p class="hint" id="commissionScheduleSource">Источник: Excel «Защита по дням» из <code>data/</code>.</p>
+      </div>
+      <div class="commission-schedule" id="commissionSchedule">
+        <p class="muted">Загрузка расписания…</p>
+      </div>
+    </div>
+  </div>
+</section>

@@ -60,6 +60,11 @@ from form2act.custom_fields import (
     field_catalog,
     list_global as list_custom_fields_global,
 )
+from form2act.commissions import (
+    commission_from_payload,
+    commission_payload,
+    save_commission,
+)
 from form2act.word_templates import list_word_templates, merge_fields_in_template, resolve_template
 
 app = Flask(__name__)
@@ -458,6 +463,21 @@ def api_upload():
             "path": str(dest),
         }
     )
+
+
+@app.get("/api/commission")
+def api_commission_get():
+    return jsonify(commission_payload())
+
+
+@app.put("/api/commission")
+def api_commission_put():
+    body = request.get_json(silent=True) or {}
+    if not isinstance(body, dict):
+        return jsonify({"error": "Ожидается JSON-объект"}), 400
+    commission = commission_from_payload(body)
+    save_commission(commission)
+    return jsonify(commission_payload())
 
 
 @app.get("/api/excel-files")

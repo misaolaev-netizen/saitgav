@@ -1,0 +1,297 @@
+.panel--commission.is-active {
+  display: grid;
+  gap: 1rem;
+}
+
+.commission-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+@media (max-width: 960px) {
+  .commission-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.commission-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.commission-card__head h2 {
+  margin: 0 0 0.25rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.commission-card__head .hint {
+  margin: 0;
+}
+
+.commission-roles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.65rem;
+}
+
+.commission-role {
+  border-radius: var(--radius);
+  padding: 0.85rem 1rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.commission-role__label {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.commission-role__name {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text, #fff);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: normal;
+  line-height: 1.35;
+}
+
+.commission-role__position {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: normal;
+  line-height: 1.4;
+}
+
+.commission-role--chair {
+  border-color: rgba(126, 200, 255, 0.35);
+  background: rgba(126, 200, 255, 0.08);
+}
+
+.commission-role--deputy {
+  border-color: rgba(195, 145, 255, 0.35);
+  background: rgba(195, 145, 255, 0.08);
+}
+
+.commission-role--secretary {
+  border-color: rgba(160, 220, 170, 0.3);
+  background: rgba(160, 220, 170, 0.06);
+}
+
+.commission-section-title {
+  margin: 0 0 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.commission-member-list {
+  margin: 0;
+  padding-left: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.commission-member-list li {
+  line-height: 1.4;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+.commission-member-list .member-name {
+  font-weight: 600;
+}
+
+.commission-member-list .member-position {
+  color: var(--muted);
+}
+
+.commission-edit {
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.commission-edit > summary {
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--muted);
+  list-style: none;
+}
+
+.commission-edit > summary::-webkit-details-marker {
+  display: none;
+}
+
+.commission-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  margin-top: 0.65rem;
+}
+
+.commission-form__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  gap: 0.55rem;
+}
+
+@media (max-width: 720px) {
+  .commission-form__row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.commission-form__group {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius);
+  padding: 0.65rem 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin: 0;
+}
+
+.commission-form__group legend {
+  padding: 0 0.4rem;
+  font-size: 0.78rem;
+  color: var(--muted);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.commission-form__members {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.commission-form__member-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr) auto;
+  gap: 0.45rem;
+  align-items: center;
+}
+
+.commission-form__member-row .ghost {
+  padding: 0.35rem 0.65rem;
+  font-size: 0.78rem;
+}
+
+.commission-form__actions {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.commission-schedule {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.commission-day {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius);
+  padding: 0.65rem 0.85rem;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.commission-day__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.45rem;
+  margin-bottom: 0.4rem;
+}
+
+.commission-day__date {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.commission-day__weekday {
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.commission-day__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.commission-day__list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem;
+  line-height: 1.4;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+.commission-day__role {
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 0.05rem 0.4rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.commission-day__list li.role-chairman .commission-day__role {
+  color: rgba(126, 200, 255, 0.95);
+  background: rgba(126, 200, 255, 0.12);
+}
+
+.commission-day__list li.role-deputy_chairman .commission-day__role {
+  color: rgba(195, 145, 255, 0.95);
+  background: rgba(195, 145, 255, 0.12);
+}
+
+.commission-day__list li.role-secretary .commission-day__role {
+  color: rgba(160, 220, 170, 0.95);
+  background: rgba(160, 220, 170, 0.1);
+}
+
+.commission-day__name {
+  font-weight: 600;
+}
+
+.commission-day__note {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
