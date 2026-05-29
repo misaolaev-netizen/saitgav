@@ -104,13 +104,12 @@ def _scan_xml_parts(docx: zipfile.ZipFile) -> tuple[set[str], set[str]]:
             field = _normalize_field_key(m.group(1).strip())
             if is_valid_merge_field_name(field):
                 brace.add(field)
-    # Поля в одном абзаце <w:p>, если Word разбил текст на несколько <w:t>
-    for block in re.findall(r"<w:p\b[^>]*>.*?</w:p>", xml, flags=re.DOTALL):
-        para_text = "".join(re.findall(r"<w:t[^>]*>([^<]*)</w:t>", block))
-        for m in _BRACE_SCAN_RE.finditer(para_text):
-            field = _normalize_field_key(m.group(1).strip())
-            if is_valid_merge_field_name(field):
-                brace.add(field)
+        for block in re.findall(r"<w:p\b[^>]*>.*?</w:p>", xml, flags=re.DOTALL):
+            para_text = "".join(re.findall(r"<w:t[^>]*>([^<]*)</w:t>", block))
+            for m in _BRACE_SCAN_RE.finditer(para_text):
+                field = _normalize_field_key(m.group(1).strip())
+                if is_valid_merge_field_name(field):
+                    brace.add(field)
     return mailmerge, brace
 
 

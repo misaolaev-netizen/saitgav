@@ -1,18 +1,32 @@
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 import pandas as pd
 
 from form2act.config import DIPLOMA_FORM_COLUMNS, DP_COLUMNS, FORM_COLUMNS, GIA_COLUMNS, TEMPLATES_COLUMNS
 from form2act.diploma import format_pages
-from form2act.excel_io import read_sheet
+from form2act.excel_io import list_sheet_names, read_sheet
 from form2act.utils import format_questions_from_form, normalize_fio, row_to_record
 from form2act.store import DataStore
 
+_DATE_FROM_SHEET_RE = re.compile(r"^(\d{1,2})\.(\d{1,2})\.(\d{2,4})")
 
-def load_dp(store: DataStore, path: Path, sheet: str | None = None) -> int:
+
+def _date_from_sheet_name(sheet_name: str) -> str | None:
+    m = _DATE_FROM_SHEET_RE.match(sheet_name.strip())
+    if not m:
+        return None
+    day, month, year = m.group(1), m.group(2), m.group(3)
+    if len(year) == 2:
+        year = "20" + year
+    return f"{day.zfill(2)}.{month.zfill(2)}.{year}"
+
+
+def _load_dp_sheet(store: DataStore, path: Path, sheet: str | None) -> int:
     df, sheet_name = read_sheet(path, sheet)
+    date_from_sheet = _date_from_sheet_name(sheet_name)
     count = 0
     for _, row in df.iterrows():
         data = row_to_record(row, DP_COLUMNS)
@@ -20,11 +34,27 @@ def load_dp(store: DataStore, path: Path, sheet: str | None = None) -> int:
         if not fio:
             continue
         data["Фамилия_имя_отчество"] = fio
+        if date_from_sheet and not data.get("Дата_защиты_диплома"):
+            data["Дата_защиты_диплома"] = date_from_sheet
         store.apply_row(normalize_fio(fio), data, "ДП")
         count += 1
-    store.meta["dp_file"] = str(path)
-    store.meta["dp_sheet"] = sheet_name
     return count
+
+
+def load_dp(store: DataStore, path: Path, sheet: str | None = None) -> int:
+    if sheet:
+        count = _load_dp_sheet(store, path, sheet)
+        store.meta["dp_file"] = str(path)
+        store.meta["dp_sheet"] = sheet
+        return count
+
+    sheets = list_sheet_names(path)
+    total = 0
+    for sh in sheets:
+        total += _load_dp_sheet(store, path, sh)
+    store.meta["dp_file"] = str(path)
+    store.meta["dp_sheet"] = sheets[0] if sheets else None
+    return total
 
 
 def load_diploma_form(store: DataStore, path: Path, sheet: str | None = None) -> int:

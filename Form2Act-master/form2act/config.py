@@ -7,7 +7,7 @@ _legacy_data = BASE_DIR / "dz"
 if _legacy_data.is_dir() and not DATA_DIR.is_dir():
     _legacy_data.rename(DATA_DIR)
 OUTPUT_DIR = BASE_DIR / "output"
-TEMPLATE_PROTOCOL = DATA_DIR / "протоколШАБЛОН (1).docx"
+TEMPLATE_PROTOCOL = DATA_DIR / "протоколШАБЛОн.docx"
 
 MERGE_FIELDS = [
     "Протокол",
@@ -62,6 +62,8 @@ DP_COLUMNS = {
     "Дипломный руководитель": "Руководитель",
     "Рецензент (полностью ФИО, должность, полное название компании)": "Рецензент",
     "КП по МДК 05.02 Разработка кода информационных систем (2 курс)": "kp",
+    "Группа": "Группа",
+    "Протокол": "Протокол",
 }
 
 FORM_COLUMNS = {
