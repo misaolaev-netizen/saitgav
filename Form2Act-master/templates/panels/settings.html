@@ -1,0 +1,51 @@
+<section id="panel-settings" class="panel" role="tabpanel" hidden>
+  <div class="settings-grid">
+    <div class="card glass">
+      <h2>Тема оформления</h2>
+      <p class="hint">
+        Выберите цветовую схему — как в редакторах кода (VS Code). Выбор сохраняется в браузере.
+      </p>
+      <div id="themePalette" class="theme-palette" role="radiogroup" aria-label="Тема оформления"></div>
+
+      <div class="settings-row settings-row--actions">
+        <button type="button" class="secondary" id="btnResetTheme">Сбросить тему</button>
+        <span class="hint muted" id="themeCurrent"></span>
+      </div>
+    </div>
+
+    <div class="card glass">
+      <h2>Поведение интерфейса</h2>
+      <p class="hint">Тонкие настройки UI, тоже сохраняются локально.</p>
+
+      <label class="check-row">
+        <input type="checkbox" id="settingCompactDensity">
+        <span>Плотный режим (меньше отступов в карточках и таблицах)</span>
+      </label>
+      <label class="check-row">
+        <input type="checkbox" id="settingReduceMotion">
+        <span>Уменьшить анимации (для слабых машин и читалок экрана)</span>
+      </label>
+      <label class="check-row">
+        <input type="checkbox" id="settingAutoReload" checked>
+        <span>Автоматически перезагружать данные при смене файла/листа</span>
+      </label>
+
+      <div class="settings-row settings-row--actions">
+        <button type="button" class="secondary" id="btnClearLocalSettings">Очистить настройки</button>
+      </div>
+    </div>
+
+    <div class="card glass">
+      <h2>О приложении</h2>
+      <p class="hint">
+        Form2Act — слияние Excel и Word-шаблонов в протоколы и акты. Все основные файлы лежат в
+        <code>data/</code>. Документация — в <code>README.md</code> репозитория.
+      </p>
+      <ul class="settings-about-list">
+        <li><strong>Шаблоны Word</strong> — <code>data/*.docx</code></li>
+        <li><strong>Excel</strong> — <code>data/*.xlsx</code> (файлы с префиксом <code>~$</code> игнорируются)</li>
+        <li><strong>Сгенерированные документы</strong> — папка <code>output/</code></li>
+      </ul>
+    </div>
+  </div>
+</section>

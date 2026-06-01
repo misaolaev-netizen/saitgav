@@ -7,14 +7,14 @@ let autoReloadTimer = null;
 async function reload() {
   const selectedFile = document.getElementById('excelFileSelect')?.value || '';
   const selectedSheet = document.getElementById('excelSheetSelect')?.value || '';
+  const fileName = selectedFile.split(/[\\/]/).pop() || '';
+  const isLock = fileName.startsWith('~$') || fileName.startsWith('.~lock');
+  const dpFile = !isLock ? selectedFile : '';
   const body = {
     use_templates: document.getElementById('useTemplates').checked,
     dp_sheet: selectedSheet,
     templates_sheet: selectedSheet,
-    dp_file: selectedFile,
-    form_file: selectedFile,
-    gia_file: selectedFile,
-    templates_file: selectedFile,
+    dp_file: dpFile,
   };
   const r = await fetch('/api/reload', {
     method: 'POST',
@@ -270,6 +270,7 @@ async function loadExcelFilesForReload() {
 
 function scheduleAutoReload() {
   if (autoReloadTimer) clearTimeout(autoReloadTimer);
+  if (F2A.autoReloadEnabled === false) return;
   autoReloadTimer = setTimeout(() => {
     F2A.reload?.();
   }, 350);

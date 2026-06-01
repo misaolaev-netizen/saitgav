@@ -111,7 +111,11 @@ def api_reload():
             p.relative_to(DATA_DIR.resolve())
         except Exception:
             return None
-        return p if p.exists() else None
+        if not p.exists():
+            return None
+        if p.name.startswith("~$") or p.name.startswith(".~lock"):
+            return None
+        return p
 
     stats = reload_all(
         store,
@@ -483,7 +487,13 @@ def api_commission_put():
 @app.get("/api/excel-files")
 def api_excel_files():
     files = sorted(
-        [p for p in DATA_DIR.glob("*.xls*") if p.suffix.lower() in (".xlsx", ".xls")],
+        [
+            p
+            for p in DATA_DIR.glob("*.xls*")
+            if p.suffix.lower() in (".xlsx", ".xls")
+            and not p.name.startswith("~$")
+            and not p.name.startswith(".~lock")
+        ],
         key=lambda p: p.name.lower(),
     )
     result = []
