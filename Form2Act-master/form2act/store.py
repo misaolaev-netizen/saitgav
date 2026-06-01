@@ -9,6 +9,44 @@ from form2act.config import DIPLOMA_FIELDS, MERGE_FIELDS, PREVIEW_FIELDS
 from form2act.custom_fields import all_custom_names
 from form2act.excel_io import list_sheet_names
 from form2act.morphology import finalize_names
+from form2act.utils import is_real_student_fio
+
+
+def _commission_fields() -> dict[str, str]:
+    """Поля состава ГЭК для подстановки в шаблон протокола.
+
+    Загружаются лениво, чтобы избежать циклического импорта между store.py
+    и commissions.py.
+    """
+    try:
+        from form2act.commissions import load_commission
+    except Exception:
+        return {}
+
+    commission = load_commission()
+
+    def _person_line(person) -> str:
+        name = (person.name or "").strip()
+        position = (person.position or "").strip()
+        if name and position:
+            return f"{name}, {position}"
+        return name or position
+
+    members_lines = [m.as_line() for m in commission.members if (m.name or "").strip()]
+    members_block = "\n".join(members_lines)
+
+    fields = {
+        "ПредседательГЭК": _person_line(commission.chairman),
+        "ЗамПредседателяГЭК": _person_line(commission.deputy_chairman),
+        "СекретарьГЭК": _person_line(commission.secretary),
+        "Секретарь": _person_line(commission.secretary),
+        "ЧленыГЭК": members_block,
+        "Председатель_ГЭК": _person_line(commission.chairman),
+        "Заместитель_председателя_ГЭК": _person_line(commission.deputy_chairman),
+        "Секретарь_ГЭК": _person_line(commission.secretary),
+        "Члены_ГЭК": members_block,
+    }
+    return {k: v for k, v in fields.items() if v}
 
 
 def _strip_pages_prefix(value: str) -> str:
@@ -41,6 +79,11 @@ class DataStore:
         self.meta.clear()
 
     def apply_row(self, fio_key: str, data: dict, source: str) -> None:
+        display_fio = str(data.get("fio") or "").strip()
+        if not is_real_student_fio(display_fio) and fio_key not in self.records:
+            # Не заводим новые записи для служебных строк
+            # («Комиссия:», одиночные фамилии преподавателей, «заочка» и т. п.).
+            return
         if fio_key not in self.records:
             self.records[fio_key] = {"_fio": "", "_sources": []}
 
@@ -145,6 +188,32 @@ class DataStore:
         if record.get("F2") and "F2" not in payload:
             payload["F2"] = str(record["F2"])
         self._append_record_fields(payload, record)
+        # Алиасы для подписи полей из v2-шаблона протокола.
+        _V2_ALIASES = {
+            "КоличествоСтраниц": ("ВКР",),
+            "Изделие": ("Готовое_изделие",),
+            "ОтзывРуководителя": ("Отзыв_руководителя",),
+            "ОтзывРец": ("Рецензия_замечания",),
+            "Достоинства": ("Рецензия_достоинства",),
+            "Уровень_знаний": ("Уровень_знаний",),
+            "ГрафЧасть": ("ГрафЧасть", "Графическая_часть"),
+            "Фамилия_имя_отчество_в_Родит_п": (
+                "Фамилия_имя_отчество_в_Родит_п",
+                "Фамилия_имя_отчество_РП",
+                "ФИО_РП",
+            ),
+            "Руководитель_Рп": ("Руководитель_РП", "Руководитель_в_Родит_п"),
+        }
+        for alias, sources in _V2_ALIASES.items():
+            if payload.get(alias):
+                continue
+            for src in sources:
+                value = record.get(src) or payload.get(src)
+                if value:
+                    payload[alias] = str(value)
+                    break
+        for name, value in _commission_fields().items():
+            payload.setdefault(name, value)
         return payload
 
     def get_preview_payload(self, fio_key: str) -> dict[str, str]:
@@ -165,6 +234,8 @@ class DataStore:
         if record.get("F2") and "F2" not in payload:
             payload["F2"] = str(record["F2"])
         self._append_record_fields(payload, record)
+        for name, value in _commission_fields().items():
+            payload.setdefault(name, value)
         return payload
 
     def get_diploma_form(self, fio_key: str) -> dict[str, str]:

@@ -8,6 +8,7 @@ from mailmerge import MailMerge
 
 from form2act.config import MERGE_FIELDS, OUTPUT_DIR, TEMPLATE_PROTOCOL
 from form2act.docx_tables import append_tables_from_externals, list_external_tables_needed
+from form2act.docx_field_rename import rename_generic_merge_fields
 from form2act.template_scan import resolve_table_anchor
 from form2act.docx_placeholders import replace_brace_placeholders_in_docx_bytes
 from form2act.docx_table_brace import expand_brace_table_row
@@ -123,7 +124,10 @@ def generate_protocol(
 
     expanded = expand_merge_placeholders(merge_data)
     work_tpl = OUTPUT_DIR / "_gen_work_tpl.docx"
-    work_tpl.write_bytes(replace_brace_placeholders_in_docx_bytes(tpl.read_bytes(), expanded))
+    # Сначала переименовываем все MERGEFIELD F<num> по их подписи «Х» —
+    # в v2-шаблоне все поля различаются только этим фрагментом.
+    renamed_bytes, _ = rename_generic_merge_fields(tpl.read_bytes())
+    work_tpl.write_bytes(replace_brace_placeholders_in_docx_bytes(renamed_bytes, expanded))
     try:
         with MailMerge(str(work_tpl)) as doc:
             fields_in_tpl = doc.get_merge_fields()
@@ -273,6 +277,15 @@ def generate_combined_document(
     if externals:
         temp_dir = tempfile.mkdtemp()
         work_tpl = append_tables_from_externals(template, externals)
+
+    # Переименовываем F1/F17/… в v2-шаблонах до MailMerge.
+    try:
+        renamed_bytes, _ = rename_generic_merge_fields(Path(work_tpl).read_bytes())
+        rename_tmp = OUTPUT_DIR / "_gen_work_tpl_combined.docx"
+        rename_tmp.write_bytes(renamed_bytes)
+        work_tpl = rename_tmp
+    except Exception:
+        pass
 
     try:
         with MailMerge(str(work_tpl)) as doc:

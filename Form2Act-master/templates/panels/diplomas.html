@@ -37,9 +37,13 @@
     </aside>
 
     <form id="diplomaForm" class="card glass diploma-form">
-      <div class="form-head">
+      <div class="form-head form-head--sticky">
         <h2>ДИПЛОМЫ</h2>
         <span class="badge" id="dipSaveTarget">Таблица не выбрана</span>
+        <div class="form-head__actions">
+          <span id="dipAutoSaveStatus" class="hint muted dip-autosave-status">Черновик: —</span>
+          <button type="submit" id="dipSaveTop" class="primary">Сохранить</button>
+        </div>
       </div>
       <label class="field">
         <span>Файл сохранения (Excel)</span>

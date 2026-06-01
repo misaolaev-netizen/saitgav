@@ -75,6 +75,43 @@ UPLOAD_DIR = Path(__file__).parent / "uploads"
 UPLOAD_DIR.mkdir(exist_ok=True)
 TEMPLATE_UPLOAD_DIR = UPLOAD_DIR / "templates"
 TEMPLATE_UPLOAD_DIR.mkdir(exist_ok=True)
+SOURCE_UPLOAD_DIR = UPLOAD_DIR / "sources"
+SOURCE_UPLOAD_DIR.mkdir(exist_ok=True)
+
+
+def _allowed_excel_roots() -> tuple[Path, ...]:
+    return (DATA_DIR.resolve(), SOURCE_UPLOAD_DIR.resolve())
+
+
+def _safe_excel_path(raw: str | None) -> Path | None:
+    value = (raw or "").strip()
+    if not value:
+        return None
+    p = Path(value)
+    if not p.is_absolute():
+        # Относительные пути ищем сначала в sources, потом в data.
+        for root in (SOURCE_UPLOAD_DIR, DATA_DIR):
+            candidate = (root / p).resolve()
+            if candidate.exists():
+                p = candidate
+                break
+        else:
+            p = (DATA_DIR / p).resolve()
+    else:
+        p = p.resolve()
+    for root in _allowed_excel_roots():
+        try:
+            p.relative_to(root)
+            break
+        except Exception:
+            continue
+    else:
+        return None
+    if not p.exists():
+        return None
+    if p.name.startswith("~$") or p.name.startswith(".~lock"):
+        return None
+    return p
 
 
 @app.route("/")
@@ -100,29 +137,12 @@ def index():
 @app.post("/api/reload")
 def api_reload():
     body = request.get_json(silent=True) or {}
-    def _safe_data_path(raw: str | None) -> Path | None:
-        value = (raw or "").strip()
-        if not value:
-            return None
-        p = Path(value)
-        if not p.is_absolute():
-            p = (DATA_DIR / p).resolve()
-        try:
-            p.relative_to(DATA_DIR.resolve())
-        except Exception:
-            return None
-        if not p.exists():
-            return None
-        if p.name.startswith("~$") or p.name.startswith(".~lock"):
-            return None
-        return p
-
     stats = reload_all(
         store,
-        dp_path=_safe_data_path(body.get("dp_file")),
-        form_path=_safe_data_path(body.get("form_file")),
-        gia_path=_safe_data_path(body.get("gia_file")),
-        templates_path=_safe_data_path(body.get("templates_file")),
+        dp_path=_safe_excel_path(body.get("dp_file")),
+        form_path=_safe_excel_path(body.get("form_file")),
+        gia_path=_safe_excel_path(body.get("gia_file")),
+        templates_path=_safe_excel_path(body.get("templates_file")),
         dp_sheet=body.get("dp_sheet"),
         templates_sheet=body.get("templates_sheet"),
         use_templates=body.get("use_templates", True),
@@ -242,15 +262,9 @@ def api_excel_field_lookup():
     if not raw_path or not fio or not field:
         return jsonify({"error": "Нужны path, fio и field"}), 400
 
-    p = Path(raw_path)
-    if not p.is_absolute():
-        p = (DATA_DIR / p).resolve()
-    try:
-        p.relative_to(DATA_DIR.resolve())
-    except Exception:
+    p = _safe_excel_path(raw_path)
+    if p is None:
         return jsonify({"error": "Недопустимый путь файла"}), 400
-    if not p.exists():
-        return jsonify({"error": "Файл не найден"}), 404
 
     try:
         df, sheet_name = _load_lookup_df(p, sheet)
@@ -368,21 +382,25 @@ def api_excel_row_lookup():
 
     candidates: list[tuple[Path, str | None]] = []
     if raw_path and not scan_all:
-        p = Path(raw_path)
-        if not p.is_absolute():
-            p = (DATA_DIR / p).resolve()
-        try:
-            p.relative_to(DATA_DIR.resolve())
-        except Exception:
+        p = _safe_excel_path(raw_path)
+        if p is None:
             return jsonify({"error": "Недопустимый путь файла"}), 400
-        if not p.exists():
-            return jsonify({"error": "Файл не найден"}), 404
         candidates.append((p, sheet))
     else:
-        files = sorted(
-            [p for p in DATA_DIR.glob("*.xls*") if p.suffix.lower() in (".xlsx", ".xls")],
-            key=lambda x: x.name.lower(),
-        )
+        seen_files: set[Path] = set()
+        files: list[Path] = []
+        for root in (DATA_DIR, SOURCE_UPLOAD_DIR):
+            for p in root.glob("*.xls*"):
+                if p.suffix.lower() not in (".xlsx", ".xls"):
+                    continue
+                if p.name.startswith("~$") or p.name.startswith(".~lock"):
+                    continue
+                resolved = p.resolve()
+                if resolved in seen_files:
+                    continue
+                seen_files.add(resolved)
+                files.append(p)
+        files.sort(key=lambda x: x.name.lower())
         for p in files:
             try:
                 sheets = store.sheets_in_file(p)
@@ -469,6 +487,60 @@ def api_upload():
     )
 
 
+@app.post("/api/import-source")
+def api_import_source():
+    """Принять Excel-файл из проводника без копирования в data/, сразу подключить в соответствующий слот.
+
+    Параметры multipart/form-data:
+        file: файл *.xlsx/*.xls
+        kind: одно из "dp" | "form" | "gia" | "templates"
+        sheet: необязательно — имя листа
+    """
+    file = request.files.get("file")
+    if not file or not file.filename:
+        return jsonify({"error": "Файл не передан"}), 400
+    kind = (request.form.get("kind") or "").strip().lower()
+    sheet = (request.form.get("sheet") or "").strip() or None
+    if kind not in {"dp", "form", "gia", "templates"}:
+        return jsonify({"error": "Неизвестный kind (ожидается dp/form/gia/templates)"}), 400
+
+    safe_name = Path(file.filename).name
+    if not safe_name:
+        return jsonify({"error": "Некорректное имя файла"}), 400
+    if safe_name.startswith("~$") or safe_name.startswith(".~lock"):
+        return jsonify({"error": "Это временный файл Excel, сохраните таблицу и откройте заново"}), 400
+    dest = SOURCE_UPLOAD_DIR / safe_name
+    file.save(dest)
+
+    kwargs: dict = {"use_templates": True}
+    if kind == "dp":
+        kwargs["dp_path"] = dest
+        if sheet:
+            kwargs["dp_sheet"] = sheet
+    elif kind == "form":
+        kwargs["form_path"] = dest
+    elif kind == "gia":
+        kwargs["gia_path"] = dest
+    elif kind == "templates":
+        kwargs["templates_path"] = dest
+        if sheet:
+            kwargs["templates_sheet"] = sheet
+    try:
+        stats = reload_all(store, **kwargs)
+    except Exception as exc:
+        return jsonify({"error": f"Не удалось импортировать: {exc}"}), 400
+    return jsonify(
+        {
+            "ok": True,
+            "path": str(dest),
+            "name": dest.name,
+            "kind": kind,
+            "sheet": sheet,
+            "stats": stats,
+        }
+    )
+
+
 @app.get("/api/commission")
 def api_commission_get():
     return jsonify(commission_payload())
@@ -486,23 +558,34 @@ def api_commission_put():
 
 @app.get("/api/excel-files")
 def api_excel_files():
-    files = sorted(
-        [
-            p
-            for p in DATA_DIR.glob("*.xls*")
-            if p.suffix.lower() in (".xlsx", ".xls")
-            and not p.name.startswith("~$")
-            and not p.name.startswith(".~lock")
-        ],
-        key=lambda p: p.name.lower(),
-    )
+    seen: set[Path] = set()
+    files: list[Path] = []
+    for root in (DATA_DIR, SOURCE_UPLOAD_DIR):
+        for p in root.glob("*.xls*"):
+            if p.suffix.lower() not in (".xlsx", ".xls"):
+                continue
+            if p.name.startswith("~$") or p.name.startswith(".~lock"):
+                continue
+            resolved = p.resolve()
+            if resolved in seen:
+                continue
+            seen.add(resolved)
+            files.append(p)
+    files.sort(key=lambda p: p.name.lower())
     result = []
     for p in files:
         try:
             sheets = store.sheets_in_file(p)
         except Exception:
             sheets = []
-        result.append({"name": p.name, "path": str(p), "sheets": sheets})
+        result.append(
+            {
+                "name": p.name,
+                "path": str(p),
+                "sheets": sheets,
+                "source": "upload" if p.is_relative_to(SOURCE_UPLOAD_DIR) else "data",
+            }
+        )
     return jsonify({"files": result})
 
 
@@ -513,15 +596,9 @@ def api_excel_sheet_preview():
     if not raw_path:
         return jsonify({"error": "Не указан path"}), 400
 
-    p = Path(raw_path)
-    if not p.is_absolute():
-        p = (DATA_DIR / p).resolve()
-    try:
-        p.relative_to(DATA_DIR.resolve())
-    except Exception:
+    p = _safe_excel_path(raw_path)
+    if p is None:
         return jsonify({"error": "Недопустимый путь файла"}), 400
-    if not p.exists():
-        return jsonify({"error": "Файл не найден"}), 404
 
     try:
         df, sheet_name = read_sheet(p, sheet)
