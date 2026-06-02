@@ -6,7 +6,75 @@ const DIP_TEMPLATE_KEY = 'form2act_dip_template';
 const DIPLOMA_FORM_KEYS = [
   'Рецензия_замечания', 'Рецензия_достоинства', 'Отзыв_руководителя',
   'Отзыв_руководителя_2', 'Готовое_изделие', 'Общая_оценка', 'Уровень_знаний',
+  'БаллДемо', 'оценкаДемо', 'оценкаДиплом', 'ГИА', 'Дата_ДЭ',
 ];
+const DIPLOMA_TEXT_KEYS = ['БаллДемо', 'оценкаДемо', 'оценкаДиплом', 'ГИА', 'Дата_ДЭ'];
+
+const DIP_DRAFT_PREFIX = 'form2act_dip_draft:';
+let dipDraftFio = '';
+let dipAutoSaveTimer = null;
+
+function normalizeFioKey(value) {
+  return String(value || '')
+    .replace(/\u00a0/g, ' ')
+    .replace(/[ё]/g, 'е')
+    .replace(/[Ё]/g, 'Е')
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, ' ');
+}
+
+function setAutoSaveStatus(text, kind) {
+  const el = document.getElementById('dipAutoSaveStatus');
+  if (!el) return;
+  el.textContent = text;
+  el.classList.toggle('is-saved', kind === 'saved');
+  el.classList.toggle('is-dirty', kind === 'dirty');
+}
+
+function persistDiplomaDraft() {
+  const fio = document.getElementById('dipFio')?.value || '';
+  const key = normalizeFioKey(fio);
+  if (!key) return;
+  dipDraftFio = key;
+  try {
+    const data = readDiplomaForm();
+    localStorage.setItem(DIP_DRAFT_PREFIX + key, JSON.stringify({ form: data, at: Date.now() }));
+    setAutoSaveStatus('Черновик сохранён локально', 'saved');
+  } catch {
+    /* localStorage может быть переполнен */
+  }
+}
+
+function scheduleDraftAutoSave() {
+  setAutoSaveStatus('Изменения не сохранены…', 'dirty');
+  if (dipAutoSaveTimer) clearTimeout(dipAutoSaveTimer);
+  dipAutoSaveTimer = setTimeout(persistDiplomaDraft, 400);
+}
+
+function loadDiplomaDraftFor(fio) {
+  const key = normalizeFioKey(fio);
+  if (!key) return false;
+  try {
+    const raw = localStorage.getItem(DIP_DRAFT_PREFIX + key);
+    if (!raw) {
+      dipDraftFio = key;
+      setAutoSaveStatus('Черновика нет — заполните форму', '');
+      return false;
+    }
+    const parsed = JSON.parse(raw);
+    if (parsed?.form) {
+      applyDiplomaFormValues({ ...parsed.form, fio });
+      const ts = new Date(parsed.at || Date.now()).toLocaleString('ru-RU');
+      setAutoSaveStatus(`Загружен черновик от ${ts}`, 'saved');
+      dipDraftFio = key;
+      return true;
+    }
+  } catch {
+    /* corrupted draft — ignore */
+  }
+  return false;
+}
 
 let dipTables = [];
 let dipSelectedTableId = localStorage.getItem(DIP_TABLE_STORAGE_KEY) || '';
@@ -210,7 +278,14 @@ function applyDiplomaFormValues(form) {
   document.getElementById('dipGraph').value = form.graph_pages || '';
   document.getElementById('dipMerits').value = form.Рецензия_достоинства || '';
   document.getElementById('dipQuestions').value = form.Вопросы || '';
-  DIPLOMA_FORM_KEYS.forEach(k => setDipRadio(k, form[k]));
+  DIPLOMA_FORM_KEYS.forEach(k => {
+    if (DIPLOMA_TEXT_KEYS.includes(k)) {
+      const inp = document.querySelector(`#diplomaForm [name="${k}"]`);
+      if (inp) inp.value = form[k] || '';
+    } else {
+      setDipRadio(k, form[k]);
+    }
+  });
   updateDiplomaLivePreview();
 }
 
@@ -356,8 +431,32 @@ function initDiplomaPanel() {
   const form = document.getElementById('diplomaForm');
   if (!form) return;
 
-  form.addEventListener('input', updateDiplomaLivePreview);
-  form.addEventListener('change', updateDiplomaLivePreview);
+  form.addEventListener('input', () => {
+    updateDiplomaLivePreview();
+    scheduleDraftAutoSave();
+  });
+  form.addEventListener('change', () => {
+    updateDiplomaLivePreview();
+    scheduleDraftAutoSave();
+  });
+
+  const fioInput = document.getElementById('dipFio');
+  if (fioInput) {
+    // При смене ФИО переключаемся на черновик соответствующего студента,
+    // чтобы данные одного человека не «затирались» данными другого.
+    const handleFioSwitch = () => {
+      const value = fioInput.value;
+      const newKey = normalizeFioKey(value);
+      if (!newKey || newKey === dipDraftFio) return;
+      // Перед загрузкой нового — сохранить текущий черновик.
+      if (dipDraftFio) {
+        persistDiplomaDraft();
+      }
+      loadDiplomaDraftFor(value);
+    };
+    fioInput.addEventListener('change', handleFioSwitch);
+    fioInput.addEventListener('blur', handleFioSwitch);
+  }
 
   form.addEventListener('submit', async e => {
     e.preventDefault();
@@ -388,6 +487,7 @@ function initDiplomaPanel() {
     const ex = data.excel;
     const exMsg = ex ? (ex.updated ? ' (обновлено)' : ' (добавлено)') : '';
     setStatus('Сохранено в «' + (dipTables.find(t => t.id === dipSelectedTableId)?.name || 'таблицу') + '»' + exMsg);
+    persistDiplomaDraft();
     await F2A.loadStudents?.();
     await loadDiplomaTables();
     window.loadProtocolTablePickLists?.();

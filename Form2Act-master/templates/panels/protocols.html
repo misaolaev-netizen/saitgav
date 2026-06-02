@@ -16,28 +16,54 @@
 
       <details class="card-details mt-sm" open>
         <summary>Источник Excel</summary>
-        <p class="hint">Выберите файл из <code>data/</code> и лист для чтения.</p>
+        <p class="hint">Выберите файл из <code>data/</code>.</p>
         <label class="field">
           <span>Excel-файл</span>
           <select id="excelFileSelect"></select>
         </label>
-        <label class="field">
-          <span>Лист выбранного файла</span>
-          <select id="excelSheetSelect"></select>
-        </label>
       </details>
 
-      <details class="card-details card-details--upload mt-sm">
-        <summary>Заменить файл в data/ с компьютера</summary>
-        <p class="hint">Файл будет сохранён в <code>data/</code>. Затем нажмите «Перезагрузить из data/».</p>
+      <details class="card-details card-details--upload mt-sm" open>
+        <summary>Импорт Excel из проводника</summary>
+        <p class="hint">Откройте файл с компьютера — он будет импортирован сразу, без копирования в <code>data/</code>.</p>
         <div class="file-picker" data-file-picker>
-          <input type="file" id="uploadFile" accept=".xlsx,.xls">
-          <span class="file-picker__btn" data-file-label>Выбрать файл .xlsx</span>
+          <input type="file" id="importSourceFile" accept=".xlsx,.xls">
+          <span class="file-picker__btn" data-file-label>Выбрать Excel .xlsx</span>
           <span class="file-picker__name" data-file-name>Файл не выбран</span>
         </div>
+        <label class="field mt-sm">
+          <span>Подключить как источник</span>
+          <select id="importSourceKind">
+            <option value="dp">ДП (дипломные проекты)</option>
+            <option value="form">Опрос</option>
+            <option value="gia">ГИА</option>
+            <option value="templates">Шаблоны для дипломов</option>
+          </select>
+        </label>
         <div class="card-actions card-actions--1">
-          <button type="button" class="secondary" id="btnUpload">Сохранить в data/</button>
+          <button type="button" id="btnImportSource">Импортировать сейчас</button>
         </div>
+
+        <details class="mt-sm">
+          <summary class="hint">Старый режим: сохранить файл в <code>data/</code></summary>
+          <div class="file-picker mt-sm" data-file-picker>
+            <input type="file" id="uploadFile" accept=".xlsx,.xls">
+            <span class="file-picker__btn" data-file-label>Выбрать файл .xlsx</span>
+            <span class="file-picker__name" data-file-name>Файл не выбран</span>
+          </div>
+          <div class="card-actions card-actions--1">
+            <button type="button" class="secondary" id="btnUpload">Сохранить в data/</button>
+          </div>
+        </details>
+      </details>
+
+      <details class="card-details mt-sm" open>
+        <summary>Выбор группы (листа)</summary>
+        <p class="hint">Лист выбранного Excel-файла — у каждого листа обычно своя группа.</p>
+        <label class="field">
+          <span>Лист / группа</span>
+          <select id="excelSheetSelect"></select>
+        </label>
       </details>
     </div>
 
@@ -72,19 +98,6 @@
         <p class="hint muted">Колонки в строке шаблона: <span id="protocolTableColumns" class="protocol-table-columns"></span></p>
       </div>
       <div id="protocolMergeStatus" class="protocol-merge-status" role="status" aria-live="polite" hidden></div>
-    </div>
-  </div>
-
-  <div class="card glass card-spaced">
-    <h2>Предпросмотр исходного листа</h2>
-    <p class="hint">Таблица выбранного Excel-листа в оригинальном виде.</p>
-    <div class="students-table-wrap custom-scroll">
-      <table class="students-table" id="excelSheetPreviewTable">
-        <thead id="excelSheetPreviewHead"></thead>
-        <tbody id="excelSheetPreviewBody">
-          <tr><td class="muted">Выберите файл и лист</td></tr>
-        </tbody>
-      </table>
     </div>
   </div>
 
@@ -142,4 +155,17 @@
       <button type="button" class="ghost" id="btnPreviewWord">Предпросмотр Word</button>
     </div>
   </div>
+
+  <details class="card glass card-spaced">
+    <summary><h2 style="display:inline-block;margin:0">Лист выбранного файла</h2></summary>
+    <p class="hint">Таблица выбранного Excel-листа в оригинальном виде. Развернуть/свернуть.</p>
+    <div class="students-table-wrap custom-scroll">
+      <table class="students-table" id="excelSheetPreviewTable">
+        <thead id="excelSheetPreviewHead"></thead>
+        <tbody id="excelSheetPreviewBody">
+          <tr><td class="muted">Выберите файл и лист</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </details>
 </section>

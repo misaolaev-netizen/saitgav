@@ -45,6 +45,52 @@ document.getElementById('btnUpload')?.addEventListener('click', async () => {
   await F2A.reload?.();
 });
 
+document.getElementById('btnImportSource')?.addEventListener('click', async () => {
+  const f = document.getElementById('importSourceFile')?.files?.[0];
+  const kind = document.getElementById('importSourceKind')?.value || 'dp';
+  if (!f) {
+    F2A.setStatus('Выберите Excel-файл для импорта');
+    return;
+  }
+  const fd = new FormData();
+  fd.append('file', f);
+  fd.append('kind', kind);
+  F2A.setStatus(`Импортирую «${f.name}» как ${kind.toUpperCase()}…`);
+  let data;
+  try {
+    data = await (await fetch('/api/import-source', { method: 'POST', body: fd })).json();
+  } catch (err) {
+    F2A.setStatus('Ошибка сети при импорте: ' + err.message);
+    return;
+  }
+  if (data?.error) {
+    F2A.setStatus(data.error);
+    return;
+  }
+  const fname = data.name || f.name;
+  const s = data.stats || {};
+  F2A.setStatus(
+    `Импортирован «${fname}» (${kind}). ДП:${s.dp||0}, опрос:${s.form||0}, ГИА:${s.gia||0}, шаблоны:${s.templates||0}, студентов:${s.students||0}.`
+  );
+  await F2A.loadExcelFilesForReload?.();
+  await F2A.loadStudents?.();
+});
+
+window.refreshAfterCommission = async () => {
+  // После сохранения состава ГЭК — обновить палитру полей в конструкторе
+  // и пересобрать предпросмотр Word с новыми подстановками.
+  try { await window.refreshConstructorFields?.(); } catch (_) { /* no-op */ }
+  try {
+    if (F2A.refreshWordPreview) {
+      await F2A.refreshWordPreview({ reloadFields: true, fresh: true });
+    }
+  } catch (_) { /* no-op */ }
+};
+
+document.addEventListener('form2act:commission-changed', () => {
+  window.refreshAfterCommission?.();
+});
+
 initFilePickers();
 F2A.initProtocolsStudentUi?.();
 F2A.initPreviewDocumentEditing?.();

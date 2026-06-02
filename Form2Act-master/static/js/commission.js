@@ -261,6 +261,10 @@
       state.data = data;
       renderCommission(data);
       if (status) status.textContent = 'Сохранено.';
+      try {
+        document.dispatchEvent(new CustomEvent('form2act:commission-changed', { detail: data }));
+      } catch (_) { /* no-op */ }
+      try { await window.refreshAfterCommission?.(); } catch (_) { /* no-op */ }
     } catch (err) {
       if (status) status.textContent = 'Ошибка сохранения: ' + err.message;
     }

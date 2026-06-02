@@ -37,9 +37,13 @@
     </aside>
 
     <form id="diplomaForm" class="card glass diploma-form">
-      <div class="form-head">
+      <div class="form-head form-head--sticky">
         <h2>ДИПЛОМЫ</h2>
         <span class="badge" id="dipSaveTarget">Таблица не выбрана</span>
+        <div class="form-head__actions">
+          <span id="dipAutoSaveStatus" class="hint muted dip-autosave-status">Черновик: —</span>
+          <button type="submit" id="dipSaveTop" class="primary">Сохранить</button>
+        </div>
       </div>
       <label class="field">
         <span>Файл сохранения (Excel)</span>
@@ -127,6 +131,34 @@
         <label class="chip"><input type="radio" name="Уровень_знаний" value="отличный" required> отличный</label>
         <label class="chip"><input type="radio" name="Уровень_знаний" value="хороший"> хороший</label>
         <label class="chip"><input type="radio" name="Уровень_знаний" value="удовлетворительный"> удовлетворительный</label>
+      </fieldset>
+
+      <fieldset class="field">
+        <legend>Оценки</legend>
+        <div class="field-row">
+          <label class="field">
+            <span>Балл за ДЭ</span>
+            <input type="number" name="БаллДемо" id="dipBallDemo" min="0" max="100" placeholder="45">
+          </label>
+          <label class="field">
+            <span>Оценка за ДЭ</span>
+            <input type="text" name="оценкаДемо" id="dipOcDemo" placeholder="4 (хорошо)">
+          </label>
+        </div>
+        <div class="field-row">
+          <label class="field">
+            <span>Оценка за диплом</span>
+            <input type="text" name="оценкаДиплом" id="dipOcDiplom" placeholder="3 (удовлетворительно)">
+          </label>
+          <label class="field">
+            <span>Итоговая оценка ГИА</span>
+            <input type="text" name="ГИА" id="dipGia" placeholder="4 (хорошо)">
+          </label>
+        </div>
+        <label class="field">
+          <span>Дата ДЭ</span>
+          <input type="text" name="Дата_ДЭ" id="dipDataDe" placeholder="23.06.2025 - 24.06.2025">
+        </label>
       </fieldset>
 
       <div class="btn-row">

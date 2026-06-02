@@ -10,9 +10,55 @@ _FIO_HEADER_PATTERNS = (
     "фамилия имя отчество", "фамилия_имя_отчество",
 )
 
+_XLSX_SIGNATURE = b"PK\x03\x04"
+_XLS_SIGNATURE = b"\xD0\xCF\x11\xE0"
+
+
+def _is_excel_lock_or_temp(path: Path) -> bool:
+    name = path.name
+    return name.startswith("~$") or name.startswith(".~lock")
+
+
+def _detect_engine(path: Path) -> str | None:
+    suffix = path.suffix.lower()
+    try:
+        with path.open("rb") as fh:
+            head = fh.read(8)
+    except OSError:
+        return None
+    if head.startswith(_XLSX_SIGNATURE):
+        return "openpyxl"
+    if head.startswith(_XLS_SIGNATURE):
+        return "xlrd"
+    if suffix == ".xlsx":
+        return "openpyxl"
+    if suffix == ".xls":
+        return "xlrd"
+    return None
+
+
+def _ensure_readable(path: Path) -> str:
+    if _is_excel_lock_or_temp(path):
+        raise ValueError(
+            f"Файл {path.name!r} — временный файл блокировки Excel и не содержит данных."
+        )
+    if not path.exists():
+        raise FileNotFoundError(f"Файл не найден: {path}")
+    if path.stat().st_size < 200:
+        raise ValueError(
+            f"Файл {path.name!r} слишком мал и не похож на корректный Excel-файл."
+        )
+    engine = _detect_engine(path)
+    if engine is None:
+        raise ValueError(
+            f"Не удаётся определить формат файла {path.name!r}. Сохраните его как .xlsx."
+        )
+    return engine
+
 
 def list_sheet_names(path: Path) -> list[str]:
-    return pd.ExcelFile(path).sheet_names
+    engine = _ensure_readable(path)
+    return pd.ExcelFile(path, engine=engine).sheet_names
 
 
 def _sheet_key(name: str) -> str:
@@ -44,7 +90,8 @@ def resolve_sheet_name(requested: str | None, available: list[str]) -> str:
 
 
 def _detect_header_row(path: Path, sheet_name: str, max_scan: int = 10) -> int | None:
-    raw = pd.read_excel(path, sheet_name=sheet_name, header=None, dtype=str, nrows=max_scan)
+    engine = _ensure_readable(path)
+    raw = pd.read_excel(path, sheet_name=sheet_name, header=None, dtype=str, nrows=max_scan, engine=engine)
     if raw.empty:
         return None
     first_col = str(raw.iloc[0, 0] if len(raw.columns) else "").strip().casefold()
@@ -59,10 +106,11 @@ def _detect_header_row(path: Path, sheet_name: str, max_scan: int = 10) -> int |
 
 
 def read_sheet(path: Path, sheet: str | int | None = None, *, header_row: int | None = None) -> tuple[pd.DataFrame, str]:
+    engine = _ensure_readable(path)
     names = list_sheet_names(path)
     sheet_name = resolve_sheet_name(sheet if isinstance(sheet, str) else None, names) if sheet is None or isinstance(sheet, str) else names[sheet]
 
-    kwargs: dict = {"sheet_name": sheet_name}
+    kwargs: dict = {"sheet_name": sheet_name, "engine": engine}
     if header_row is not None:
         kwargs["header"] = header_row
     else:

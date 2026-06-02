@@ -1,0 +1,326 @@
+/* VS Code-style theme presets.
+   Variables live on :root; the default values stay in variables-layout.css.
+   Switching themes is handled by setting `data-theme` on <html>. */
+
+html[data-theme="dark-plus"] {
+  --bg: #1e1e1e;
+  --glass: rgba(255, 255, 255, 0.04);
+  --glass-strong: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --text: #d4d4d4;
+  --muted: #9aa0a6;
+  --accent: #569cd6;
+  --accent-2: #c586c0;
+  --ok: #4ec9b0;
+  --danger: #f48771;
+  color-scheme: dark;
+}
+
+html[data-theme="light-plus"] {
+  --bg: #fafafa;
+  --glass: rgba(0, 0, 0, 0.03);
+  --glass-strong: rgba(0, 0, 0, 0.06);
+  --glass-border: rgba(0, 0, 0, 0.12);
+  --text: #1f1f1f;
+  --muted: #4f5560;
+  --accent: #0066b8;
+  --accent-2: #af00db;
+  --ok: #098658;
+  --danger: #a31515;
+  color-scheme: light;
+}
+
+html[data-theme="monokai"] {
+  --bg: #272822;
+  --glass: rgba(255, 255, 255, 0.04);
+  --glass-strong: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(248, 248, 242, 0.12);
+  --text: #f8f8f2;
+  --muted: #a59f85;
+  --accent: #66d9ef;
+  --accent-2: #f92672;
+  --ok: #a6e22e;
+  --danger: #fd971f;
+  color-scheme: dark;
+}
+
+html[data-theme="solarized-dark"] {
+  --bg: #002b36;
+  --glass: rgba(255, 255, 255, 0.04);
+  --glass-strong: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(147, 161, 161, 0.18);
+  --text: #93a1a1;
+  --muted: #586e75;
+  --accent: #268bd2;
+  --accent-2: #d33682;
+  --ok: #859900;
+  --danger: #dc322f;
+  color-scheme: dark;
+}
+
+html[data-theme="solarized-light"] {
+  --bg: #fdf6e3;
+  --glass: rgba(0, 0, 0, 0.03);
+  --glass-strong: rgba(0, 0, 0, 0.06);
+  --glass-border: rgba(101, 123, 131, 0.18);
+  --text: #073642;
+  --muted: #657b83;
+  --accent: #268bd2;
+  --accent-2: #6c71c4;
+  --ok: #859900;
+  --danger: #dc322f;
+  color-scheme: light;
+}
+
+html[data-theme="github-dark"] {
+  --bg: #0d1117;
+  --glass: rgba(255, 255, 255, 0.04);
+  --glass-strong: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --text: #c9d1d9;
+  --muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-2: #bc8cff;
+  --ok: #56d364;
+  --danger: #ff7b72;
+  color-scheme: dark;
+}
+
+html[data-theme="github-light"] {
+  --bg: #ffffff;
+  --glass: rgba(0, 0, 0, 0.04);
+  --glass-strong: rgba(0, 0, 0, 0.07);
+  --glass-border: rgba(0, 0, 0, 0.1);
+  --text: #1f2328;
+  --muted: #57606a;
+  --accent: #0969da;
+  --accent-2: #8250df;
+  --ok: #1a7f37;
+  --danger: #cf222e;
+  color-scheme: light;
+}
+
+html[data-theme="dracula"] {
+  --bg: #282a36;
+  --glass: rgba(255, 255, 255, 0.04);
+  --glass-strong: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(248, 248, 242, 0.14);
+  --text: #f8f8f2;
+  --muted: #a4a5b8;
+  --accent: #8be9fd;
+  --accent-2: #ff79c6;
+  --ok: #50fa7b;
+  --danger: #ff5555;
+  color-scheme: dark;
+}
+
+html[data-theme="one-dark"] {
+  --bg: #21252b;
+  --glass: rgba(255, 255, 255, 0.04);
+  --glass-strong: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --text: #abb2bf;
+  --muted: #7e8693;
+  --accent: #61afef;
+  --accent-2: #c678dd;
+  --ok: #98c379;
+  --danger: #e06c75;
+  color-scheme: dark;
+}
+
+html[data-theme="nord"] {
+  --bg: #2e3440;
+  --glass: rgba(255, 255, 255, 0.04);
+  --glass-strong: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(216, 222, 233, 0.14);
+  --text: #d8dee9;
+  --muted: #8fa1b3;
+  --accent: #88c0d0;
+  --accent-2: #b48ead;
+  --ok: #a3be8c;
+  --danger: #bf616a;
+  color-scheme: dark;
+}
+
+html[data-theme="tokyo-night"] {
+  --bg: #1a1b26;
+  --glass: rgba(255, 255, 255, 0.04);
+  --glass-strong: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(154, 165, 206, 0.14);
+  --text: #c0caf5;
+  --muted: #565f89;
+  --accent: #7aa2f7;
+  --accent-2: #bb9af7;
+  --ok: #9ece6a;
+  --danger: #f7768e;
+  color-scheme: dark;
+}
+
+html[data-theme="gruvbox-dark"] {
+  --bg: #282828;
+  --glass: rgba(255, 255, 255, 0.04);
+  --glass-strong: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(235, 219, 178, 0.14);
+  --text: #ebdbb2;
+  --muted: #a89984;
+  --accent: #83a598;
+  --accent-2: #d3869b;
+  --ok: #b8bb26;
+  --danger: #fb4934;
+  color-scheme: dark;
+}
+
+/* Light themes need a softer hero background gradient. */
+html[data-theme="light-plus"] body,
+html[data-theme="solarized-light"] body,
+html[data-theme="github-light"] body {
+  background:
+    radial-gradient(ellipse 100% 55% at 50% -8%, rgba(9, 105, 218, 0.08) 0%, transparent 52%),
+    radial-gradient(ellipse 70% 45% at 100% 40%, rgba(130, 80, 223, 0.06) 0%, transparent 48%),
+    var(--bg);
+}
+
+html[data-theme="light-plus"] .status-pill,
+html[data-theme="solarized-light"] .status-pill,
+html[data-theme="github-light"] .status-pill {
+  background: rgba(255, 255, 255, 0.6);
+}
+
+html[data-theme="light-plus"] .tab.active,
+html[data-theme="solarized-light"] .tab.active,
+html[data-theme="github-light"] .tab.active {
+  color: var(--bg);
+}
+
+/* Reduced-motion preference set from settings panel. */
+html[data-reduce-motion="true"] *,
+html[data-reduce-motion="true"] *::before,
+html[data-reduce-motion="true"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* Compact density: tighten common containers. */
+html[data-density="compact"] .card {
+  padding: 0.85rem 1rem;
+}
+html[data-density="compact"] .hero {
+  padding: 0.9rem 1.1rem;
+}
+html[data-density="compact"] .tabs {
+  margin-bottom: 0.75rem;
+}
+html[data-density="compact"] .students-table th,
+html[data-density="compact"] .students-table td {
+  padding: 0.3rem 0.5rem;
+}
+
+/* ---------------- Settings panel ---------------- */
+
+.settings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.theme-palette {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+}
+
+.theme-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.6rem;
+  border-radius: 12px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass);
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.theme-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent);
+}
+
+.theme-card.is-active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent) inset, 0 8px 22px rgba(0, 0, 0, 0.18);
+}
+
+.theme-card__swatch {
+  display: flex;
+  height: 56px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.18);
+}
+
+.theme-card__swatch span {
+  flex: 1;
+  display: block;
+}
+
+.theme-card__name {
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.theme-card__type {
+  font-size: 0.72rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.theme-card__check {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.4rem;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.7rem;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.theme-card.is-active .theme-card__check {
+  display: flex;
+}
+
+.settings-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.settings-row--actions {
+  margin-top: 1rem;
+}
+
+.settings-about-list {
+  margin: 0.5rem 0 0;
+  padding-left: 1.2rem;
+  line-height: 1.6;
+}
+
+.settings-about-list li {
+  margin-bottom: 0.2rem;
+}
