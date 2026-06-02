@@ -349,3 +349,11 @@ function initConstructor() {
 document.addEventListener('DOMContentLoaded', initConstructor);
 
 window.refreshConstructorStudents = () => fillCtorPreviewStudentSelect();
+window.refreshConstructorFields = async () => {
+  try {
+    await refreshCtorTemplateFields();
+    scheduleCtorAutoPreview();
+  } catch (e) {
+    console.warn('refreshConstructorFields failed', e);
+  }
+};

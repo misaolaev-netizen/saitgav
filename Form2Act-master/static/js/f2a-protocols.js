@@ -71,13 +71,18 @@ function fillStudentSourceFilter() {
   const sel = document.getElementById('studentFilterSource');
   if (!sel) return;
   const cur = sel.value;
-  const sources = new Set();
-  F2A.students.forEach(s => (s.sources || []).forEach(x => sources.add(x)));
-  const opts = ['<option value="">Все источники</option>'].concat(
-    [...sources].sort((a, b) => a.localeCompare(b, 'ru')).map(s => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`)
+  const counts = new Map();
+  F2A.students.forEach(s => {
+    (s.sources || []).forEach(x => counts.set(x, (counts.get(x) || 0) + 1));
+  });
+  const totalAll = F2A.students.length;
+  const opts = [`<option value="">Все источники (${totalAll})</option>`].concat(
+    [...counts.entries()]
+      .sort((a, b) => a[0].localeCompare(b[0], 'ru'))
+      .map(([s, n]) => `<option value="${escapeHtml(s)}">Только ${escapeHtml(s)} (${n})</option>`)
   );
   sel.innerHTML = opts.join('');
-  if (cur && [...sources].includes(cur)) sel.value = cur;
+  if (cur && counts.has(cur)) sel.value = cur;
 }
 
 function getVisibleStudents() {
@@ -829,28 +834,40 @@ function syncTemplateSelects(sourceId, value) {
 async function loadWordTemplates(selectPath) {
   const first = document.getElementById(TEMPLATE_SELECT_IDS[0]);
   if (!first) return;
+  // Шаг 1: получить список — только эти ошибки заменяют выпадашку.
+  let list;
   try {
-    const data = await (await fetch('/api/word-templates')).json();
-    const list = data.templates || [];
-    const cur = selectPath || getSelectedTemplate();
-    const html = templateSelectOptions(list, cur);
+    const resp = await fetch('/api/word-templates');
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const data = await resp.json();
+    list = data.templates || [];
+  } catch (err) {
+    console.error('loadWordTemplates fetch failed', err);
+    const html = '<option value="">— ошибка загрузки —</option>';
     TEMPLATE_SELECT_IDS.forEach(id => {
       const el = document.getElementById(id);
       if (el) el.innerHTML = html;
     });
-    if (cur) syncTemplateSelects(null, cur);
-    await loadTemplateScan();
-    refreshProtocolMergeStatus();
-    if (document.querySelector('.tab.active')?.dataset.tab === 'preview' && getSelectedTemplate()) {
+    return;
+  }
+  // Шаг 2: рендерим список и подтягиваем дополнительные данные.
+  // Ошибки на этом шаге НЕ должны затирать только что отрисованный select.
+  const cur = selectPath || getSelectedTemplate();
+  const html = templateSelectOptions(list, cur);
+  TEMPLATE_SELECT_IDS.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = html;
+  });
+  if (cur) syncTemplateSelects(null, cur);
+  try { await loadTemplateScan(); } catch (e) { console.warn('loadTemplateScan failed', e); }
+  try { refreshProtocolMergeStatus(); } catch (e) { console.warn('refreshProtocolMergeStatus failed', e); }
+  if (document.querySelector('.tab.active')?.dataset.tab === 'preview' && getSelectedTemplate()) {
+    try {
       ensurePreviewStudentId();
-      refreshWordPreview({ reloadFields: true });
+      await F2A.refreshWordPreview?.({ reloadFields: true });
+    } catch (e) {
+      console.warn('preview refresh failed', e);
     }
-  } catch {
-    const err = '<option value="">— ошибка загрузки —</option>';
-    TEMPLATE_SELECT_IDS.forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.innerHTML = err;
-    });
   }
 }
 

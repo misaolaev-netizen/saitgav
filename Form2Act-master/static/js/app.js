@@ -76,6 +76,21 @@ document.getElementById('btnImportSource')?.addEventListener('click', async () =
   await F2A.loadStudents?.();
 });
 
+window.refreshAfterCommission = async () => {
+  // После сохранения состава ГЭК — обновить палитру полей в конструкторе
+  // и пересобрать предпросмотр Word с новыми подстановками.
+  try { await window.refreshConstructorFields?.(); } catch (_) { /* no-op */ }
+  try {
+    if (F2A.refreshWordPreview) {
+      await F2A.refreshWordPreview({ reloadFields: true, fresh: true });
+    }
+  } catch (_) { /* no-op */ }
+};
+
+document.addEventListener('form2act:commission-changed', () => {
+  window.refreshAfterCommission?.();
+});
+
 initFilePickers();
 F2A.initProtocolsStudentUi?.();
 F2A.initPreviewDocumentEditing?.();

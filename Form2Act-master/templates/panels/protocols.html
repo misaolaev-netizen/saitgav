@@ -96,19 +96,6 @@
     </div>
   </div>
 
-  <div class="card glass card-spaced">
-    <h2>Предпросмотр исходного листа</h2>
-    <p class="hint">Таблица выбранного Excel-листа в оригинальном виде.</p>
-    <div class="students-table-wrap custom-scroll">
-      <table class="students-table" id="excelSheetPreviewTable">
-        <thead id="excelSheetPreviewHead"></thead>
-        <tbody id="excelSheetPreviewBody">
-          <tr><td class="muted">Выберите файл и лист</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
   <div class="card glass card-spaced students-card">
     <div class="students-card__head">
       <h2>Студенты</h2>
@@ -163,4 +150,17 @@
       <button type="button" class="ghost" id="btnPreviewWord">Предпросмотр Word</button>
     </div>
   </div>
+
+  <details class="card glass card-spaced">
+    <summary><h2 style="display:inline-block;margin:0">Лист выбранного файла</h2></summary>
+    <p class="hint">Таблица выбранного Excel-листа в оригинальном виде. Развернуть/свернуть.</p>
+    <div class="students-table-wrap custom-scroll">
+      <table class="students-table" id="excelSheetPreviewTable">
+        <thead id="excelSheetPreviewHead"></thead>
+        <tbody id="excelSheetPreviewBody">
+          <tr><td class="muted">Выберите файл и лист</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </details>
 </section>
