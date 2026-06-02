@@ -27,6 +27,23 @@ def _date_from_sheet_name(sheet_name: str) -> str | None:
 def _load_dp_sheet(store: DataStore, path: Path, sheet: str | None) -> int:
     df, sheet_name = read_sheet(path, sheet)
     date_from_sheet = _date_from_sheet_name(sheet_name)
+
+    # В «Защита по дням» колонка с номером протокола нередко без заголовка
+    # (превращается в `Unnamed: 4`). Переименуем её обратно в `Протокол`,
+    # если она стоит сразу после `Дипломный руководитель` и содержит числа.
+    cols = list(df.columns)
+    if "Дипломный руководитель" in cols and "Протокол" not in cols:
+        idx = cols.index("Дипломный руководитель")
+        for cand_idx in range(idx + 1, min(idx + 3, len(cols))):
+            cand = cols[cand_idx]
+            if not (isinstance(cand, str) and cand.startswith("Unnamed")):
+                continue
+            series = df[cand]
+            numeric = pd.to_numeric(series, errors="coerce")
+            if numeric.notna().any():
+                df = df.rename(columns={cand: "Протокол"})
+                break
+
     count = 0
     for _, row in df.iterrows():
         data = row_to_record(row, DP_COLUMNS)

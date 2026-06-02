@@ -6,7 +6,9 @@ const DIP_TEMPLATE_KEY = 'form2act_dip_template';
 const DIPLOMA_FORM_KEYS = [
   'Рецензия_замечания', 'Рецензия_достоинства', 'Отзыв_руководителя',
   'Отзыв_руководителя_2', 'Готовое_изделие', 'Общая_оценка', 'Уровень_знаний',
+  'БаллДемо', 'оценкаДемо', 'оценкаДиплом', 'ГИА', 'Дата_ДЭ',
 ];
+const DIPLOMA_TEXT_KEYS = ['БаллДемо', 'оценкаДемо', 'оценкаДиплом', 'ГИА', 'Дата_ДЭ'];
 
 const DIP_DRAFT_PREFIX = 'form2act_dip_draft:';
 let dipDraftFio = '';
@@ -276,7 +278,14 @@ function applyDiplomaFormValues(form) {
   document.getElementById('dipGraph').value = form.graph_pages || '';
   document.getElementById('dipMerits').value = form.Рецензия_достоинства || '';
   document.getElementById('dipQuestions').value = form.Вопросы || '';
-  DIPLOMA_FORM_KEYS.forEach(k => setDipRadio(k, form[k]));
+  DIPLOMA_FORM_KEYS.forEach(k => {
+    if (DIPLOMA_TEXT_KEYS.includes(k)) {
+      const inp = document.querySelector(`#diplomaForm [name="${k}"]`);
+      if (inp) inp.value = form[k] || '';
+    } else {
+      setDipRadio(k, form[k]);
+    }
+  });
   updateDiplomaLivePreview();
 }
 

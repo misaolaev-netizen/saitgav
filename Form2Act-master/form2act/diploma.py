@@ -65,6 +65,13 @@ def diploma_payload_from_form(body: dict) -> tuple[str, dict[str, str]]:
         if val:
             data[key] = val
 
+    # Дополнительные текстовые поля из формы «Дипломы», которые задаются вручную
+    # и должны попадать в merge-payload (оценки, дата ДЭ и т. п.).
+    for key in ("БаллДемо", "оценкаДемо", "оценкаДиплом", "ГИА", "Дата_ДЭ"):
+        val = (body.get(key) or "").strip()
+        if val:
+            data[key] = val
+
     return normalize_fio(fio), data
 
 

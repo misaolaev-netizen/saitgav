@@ -252,12 +252,14 @@ class DataStore:
         rec = self.records.get(fio_key, {})
         ov = self.overrides.get(fio_key, {})
         merged = {**rec, **ov}
+        extra_text_keys = ("БаллДемо", "оценкаДемо", "оценкаДиплом", "ГИА", "Дата_ДЭ")
         return {
             "fio": merged.get("_fio") or merged.get("Фамилия_имя_отчество") or "",
             "pages": _strip_pages_prefix(merged.get("ВКР", "")),
             "graph_pages": _strip_pages_prefix(merged.get("ГрафЧасть", "")),
             "Вопросы": str(merged.get("Вопросы", "") or ""),
             **{f: str(merged.get(f, "") or "") for f in DIPLOMA_FIELDS},
+            **{k: str(merged.get(k, "") or "") for k in extra_text_keys},
         }
 
     def list_students(self) -> list[dict[str, Any]]:
