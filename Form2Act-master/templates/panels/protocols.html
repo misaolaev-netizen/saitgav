@@ -16,14 +16,10 @@
 
       <details class="card-details mt-sm" open>
         <summary>Источник Excel</summary>
-        <p class="hint">Выберите файл из <code>data/</code> и лист для чтения.</p>
+        <p class="hint">Выберите файл из <code>data/</code>.</p>
         <label class="field">
           <span>Excel-файл</span>
           <select id="excelFileSelect"></select>
-        </label>
-        <label class="field">
-          <span>Лист выбранного файла</span>
-          <select id="excelSheetSelect"></select>
         </label>
       </details>
 
@@ -59,6 +55,15 @@
             <button type="button" class="secondary" id="btnUpload">Сохранить в data/</button>
           </div>
         </details>
+      </details>
+
+      <details class="card-details mt-sm" open>
+        <summary>Выбор группы (листа)</summary>
+        <p class="hint">Лист выбранного Excel-файла — у каждого листа обычно своя группа.</p>
+        <label class="field">
+          <span>Лист / группа</span>
+          <select id="excelSheetSelect"></select>
+        </label>
       </details>
     </div>
 
