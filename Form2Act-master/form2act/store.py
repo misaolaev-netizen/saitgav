@@ -32,6 +32,9 @@ def _commission_fields() -> dict[str, str]:
             return f"{name}, {position}"
         return name or position
 
+    def _person_name(person) -> str:
+        return (person.name or "").strip()
+
     members_lines = [m.as_line() for m in commission.members if (m.name or "").strip()]
     members_block = "\n".join(members_lines)
 
@@ -45,6 +48,13 @@ def _commission_fields() -> dict[str, str]:
         "Заместитель_председателя_ГЭК": _person_line(commission.deputy_chairman),
         "Секретарь_ГЭК": _person_line(commission.secretary),
         "Члены_ГЭК": members_block,
+        # Короткие имена для строк подписи в протоколе
+        "ПредседательГЭК_имя": _person_name(commission.chairman),
+        "ЗамПредседателяГЭК_имя": _person_name(commission.deputy_chairman),
+        "СекретарьГЭК_имя": _person_name(commission.secretary),
+        "Председатель_ГЭК_имя": _person_name(commission.chairman),
+        "Заместитель_председателя_ГЭК_имя": _person_name(commission.deputy_chairman),
+        "Секретарь_ГЭК_имя": _person_name(commission.secretary),
     }
     return {k: v for k, v in fields.items() if v}
 

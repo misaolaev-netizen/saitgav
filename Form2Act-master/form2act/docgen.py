@@ -12,6 +12,7 @@ from form2act.docx_field_rename import rename_generic_merge_fields
 from form2act.template_scan import resolve_table_anchor
 from form2act.docx_placeholders import replace_brace_placeholders_in_docx_bytes
 from form2act.docx_table_brace import expand_brace_table_row
+from form2act.docx_linebreaks import convert_newlines_to_breaks
 from form2act.merge_expand import expand_merge_placeholders
 from form2act.table_data import (
     load_xlsx_rows,
@@ -137,6 +138,10 @@ def generate_protocol(
             doc.merge(**payload)
             doc.write(str(out))
         docx_bytes = replace_brace_placeholders_in_docx_bytes(out.read_bytes(), expanded)
+        # Многострочные значения (например, «Члены ГЭК») приходят с \n —
+        # превращаем их в полноценные переводы строк <w:br/> внутри абзаца,
+        # иначе Word склеит всё в одну строку.
+        docx_bytes = convert_newlines_to_breaks(docx_bytes)
         out.write_bytes(docx_bytes)
     finally:
         work_tpl.unlink(missing_ok=True)
@@ -218,6 +223,7 @@ def generate_combined_brace_document(
         rows_data=rows_data,
     )
     docx_bytes = replace_brace_placeholders_in_docx_bytes(docx_bytes, header)
+    docx_bytes = convert_newlines_to_breaks(docx_bytes)
     out.write_bytes(docx_bytes)
     return out
 
@@ -330,6 +336,7 @@ def generate_combined_document(
 
     expanded_header = expand_merge_placeholders(header)
     docx_bytes = replace_brace_placeholders_in_docx_bytes(out.read_bytes(), expanded_header)
+    docx_bytes = convert_newlines_to_breaks(docx_bytes)
     out.write_bytes(docx_bytes)
     return out
 
